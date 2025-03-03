@@ -1,30 +1,53 @@
-import { FolderTree } from './components/folder-tree';
+import { useEffect } from 'react';
+import { DosyaGrid } from './components/grid';
+import { fetchFiles } from './fetch';
 import { useDosya } from './store';
+import { R2Object } from './types';
+import { toDosyaFiles } from './utils/to-dosya-files';
+import { DosyaSidebar } from './components/sidebar';
+import { Loader2Icon } from 'lucide-react';
 
 function App() {
-  const { files } = useDosya();
+  const { files, folders, context } = useDosya();
+
+  // useeffect to set images
+  useEffect(() => {
+    // fetch images
+    const fetchData = async () => {
+      context.state.setLoading(true);
+
+      const data = await fetchFiles();
+      files.setList(
+        toDosyaFiles<R2Object[]>(data.objects, {
+          onSuccess: (files) => {
+            folders.setList(files);
+            context.state.setLoading(false);
+          },
+        }),
+      );
+    };
+
+    fetchData();
+  }, []);
+
+  // show loading if is loading state
+  if (context.state.loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader2Icon size={44} className="animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
   return (
     <main className="flex gap-4 w-full">
       {/* SIDEBAR */}
-      <aside className="w-full max-w-[200px]">
-        <h1>My Sidebar</h1>
-        <FolderTree />
-      </aside>
+      <DosyaSidebar />
 
       {/* GRID */}
-      <section className="w-full">
-        <h1>Files</h1>
-        <ul className="grid grid-cols-4 gap-2">
-          {files.list?.map((file, index) => (
-            <li key={index}>
-              <div className="w-full h-20 rounded-md border-2 border-gray-200">
-                {file.name}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className="w-full max-w-[80%] p-4 ml-[20%]">
+        <DosyaGrid />
+      </div>
     </main>
   );
 }
