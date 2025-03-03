@@ -1,6 +1,6 @@
+import { DosyaProps } from '@/store';
 import { TDosyaFile } from '@/types';
 import { FileIconComponent } from './file-icon';
-import { DosyaContext, DosyaProps } from '@/store';
 
 export const FileList = ({
   files,

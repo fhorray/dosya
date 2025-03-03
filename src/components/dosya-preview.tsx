@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'motion/react';
 export const DosyaPreview = () => {
   const { preview } = useDosya();
 
+  console.log(preview.file);
+
   const backdropVariants = {
     hidden: {
       opacity: 0,
@@ -50,7 +52,7 @@ export const DosyaPreview = () => {
                 preview.toggle();
                 preview.clear();
               }}
-              className="absolute top-4 right-4 rounded-full p-2 bg-white"
+              className="absolute top-4 right-4 rounded-full p-1 bg-white cursor-pointer"
               whileHover={{ scale: 1.2 }}
             >
               <XIcon className="text-black" />

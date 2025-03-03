@@ -7,8 +7,7 @@ export const DosyaSidebar = () => {
   const { context, uploader } = useDosya();
 
   return (
-    <aside className="w-full max-w-[20%] border-r-2 border-gray-200 p-4 h-screen overflow-y-auto fixed bg-white">
-      <h1>My Sidebar</h1>
+    <aside className="w-full max-w-[20%] border-r-2 border-gray-200 p-4 h-screen overflow-y-auto fixed bg-white space-y-4">
       {/* ERROR */}
       {context.error.message && (
         <div className="bg-red-500 text-white p-2 rounded">

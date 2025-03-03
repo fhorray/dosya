@@ -38,10 +38,10 @@ export const FolderItem = ({ folder }: { folder: TFolderTree }) => {
   const hasChildren = folder.children && folder.children.length > 0;
 
   return (
-    <li className="py-1">
+    <li className="py-0">
       <div className="flex items-center group">
         <button
-          className={`mr-1 p-0.5 rounded-sm transition-colors ${
+          className={`mr-1 p-0.5 rounded-sm transition-colors cursor-pointer ${
             hasChildren ? 'visible' : 'invisible'
           }`}
           onClick={() => setIsOpen(!isOpen)}
@@ -55,7 +55,7 @@ export const FolderItem = ({ folder }: { folder: TFolderTree }) => {
         </button>
 
         <button
-          className="flex items-center w-full py-1 px-2 rounded-md hover:bg-gray-200 transition-colors text-left"
+          className="flex cursor-pointer items-center w-full py-1 px-2 rounded-md hover:bg-gray-200 transition-colors text-left"
           onClick={() => {
             setIsOpen(!isOpen);
             folders.setCurrentFolder(folder.children ? folder : folders.list);

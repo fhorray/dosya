@@ -11,7 +11,7 @@ export const FolderList = ({
   setCurrentFolder: (folder: TFolderTree) => void;
   viewMode: DosyaPreferences['viewMode']['default'];
 }) =>
-  viewMode === 'grid' ? (
+  viewMode === 'grid' || viewMode === 'list' ? (
     <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {folders.map((folder, index) => (
         <li

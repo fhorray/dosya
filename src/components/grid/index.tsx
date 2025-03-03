@@ -60,15 +60,15 @@ export const DosyaGrid = () => {
       )}
 
       <div className="pt-4 border-t border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Files</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          Files ({currentFolderFiles.length})
+        </h2>
         {currentFolderFiles.length > 0 ? (
           <FileList
             files={currentFolderFiles}
             preview={preview}
             viewMode={viewMode}
           />
-        ) : !currentFolderFiles.length ? (
-          <FileList files={files.list} preview={preview} viewMode={viewMode} />
         ) : (
           <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
             <FileIcon className="mx-auto text-gray-400" size={32} />

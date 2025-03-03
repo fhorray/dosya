@@ -8,7 +8,6 @@ import { getExtension } from '@/utils/get-extension';
 import { CheckIcon, FileIcon, UploadIcon, XIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
-import { Select } from './ui/select';
 
 type FileUpload = {
   name: string;
@@ -112,7 +111,7 @@ export const FileUploader = () => {
             {/* Modal Context */}
             <motion.div
               key="modal"
-              className="relative flex flex-col justify-between w-2xl min-h-[50%] max-h-[90%] h-fit bg-white rounded-md p-8 overflow-hidden"
+              className="relative flex flex-col justify-between w-2xl min-h-[50%] max-h-[90%] h-fit bg-white rounded-md p-4 overflow-hidden"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
@@ -130,7 +129,7 @@ export const FileUploader = () => {
               <div>
                 {/* INPUT FILE */}
                 <div
-                  className="relative border-2 border-dashed min-h-[120px] border-gray-200 rounded-2xl p-6 mb-8 flex items-center justify-center flex-col gap-2 hover:bg-gray-100 transition-colors"
+                  className="relative border-2 border-dashed min-h-[120px] border-gray-200 rounded-lg p-6 mb-2 flex items-center justify-center flex-col gap-2 hover:bg-gray-100 transition-colors"
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                 >
@@ -158,34 +157,12 @@ export const FileUploader = () => {
                     }}
                   />
 
-                  <UploadIcon className="h-8 w-8 text-indigo-500" />
-                  <p className="text-indigo-500 text-lg">
-                    Drag and drop or browse files
-                  </p>
+                  <UploadIcon className="h-8 w-8 text-gray-500" />
+                  <p className="text-gray-400">Drag and drop or browse files</p>
                 </div>
 
-                <span>{folders.current?.key}</span>
-
-                {/* FOLDER SELECTOR */}
-                <Select
-                  options={
-                    folders.list?.children?.flatMap((folder) => {
-                      return {
-                        label: folder.name || '',
-                        value: folder.key,
-                      };
-                    }) || []
-                  }
-                  onChange={(e) => {
-                    folders.setCurrentFolder({
-                      key: e.target.value,
-                      name: e.target.value,
-                    });
-                  }}
-                />
-
                 {/* SELECTED FILES */}
-                <div className="space-y-6 overflow-y-auto max-h-[300px] p-8">
+                <div className="space-y-6 overflow-y-auto max-h-[300px] p-3 px-6">
                   {filesData.map((file, index) => (
                     <div
                       key={index}
