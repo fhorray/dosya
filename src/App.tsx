@@ -17,8 +17,9 @@ function App() {
       context.state.setLoading(true);
 
       const data = await fetchFiles();
+      console.log({ Data: data });
       files.setList(
-        toDosyaFiles<R2Object[]>(data.objects, {
+        toDosyaFiles<R2Object[]>(data.data, {
           onSuccess: (files) => {
             folders.setList(files);
             context.state.setLoading(false);
