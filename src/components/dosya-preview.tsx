@@ -1,12 +1,10 @@
-import { useDosya } from '@/store';
-import { XIcon } from 'lucide-react';
+import { useDosya } from "@/store";
+import { XIcon } from "lucide-react";
 
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from "motion/react";
 
 export const DosyaPreview = () => {
   const { preview } = useDosya();
-
-  console.log(preview.file);
 
   const backdropVariants = {
     hidden: {
@@ -80,7 +78,7 @@ export const DosyaPreview = () => {
                 />
 
                 {/* IMG BLUR BACKGROUND BLURED */}
-                {!preview.file?.extension.endsWith('.png') ? (
+                {!preview.file?.extension.endsWith(".png") ? (
                   <img
                     src={preview.file?.url}
                     className="object-cover w-full h-full rounded-md"
@@ -93,7 +91,7 @@ export const DosyaPreview = () => {
 
               {/* Informações do arquivo */}
               <div className="absolute bottom-0 p-8 text-white">
-                {preview.file?.metadata?.description as string} -{' '}
+                {preview.file?.metadata?.description as string} -{" "}
                 {preview.file?.metadata?.owner as string}
               </div>
             </motion.div>

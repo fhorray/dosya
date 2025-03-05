@@ -1,46 +1,33 @@
-import { useDosya } from '@/store';
-import { TDosyaFile } from '@/types';
-import { useEffect, useState } from 'react';
-import { Header } from './header';
-import { FileList } from './file-list';
-import { FileIcon, FolderIcon } from 'lucide-react';
-import { FolderList } from './folder-list';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { createFolder } from "@/fetch";
+import { useDosya } from "@/store";
+import { TDosyaFolder } from "@/types";
+import { createId } from "@/utils/create-id";
+import { FileIcon, FolderIcon, Loader2Icon } from "lucide-react";
+import { FileList } from "./file-list";
+import { FolderList } from "./folder-list";
 
 export const DosyaGrid = () => {
-  const { files, folders, preview, context } = useDosya();
-  const [currentFolderFiles, setCurrentFolderFiles] = useState<TDosyaFile[]>(
-    [],
-  );
-  const viewMode = context.preferences.viewMode.default;
+  const { files, folders, preview, context, filters } = useDosya();
 
-  useEffect(() => {
-    if (folders.current) {
-      const folderPath = folders.current.key;
-      setCurrentFolderFiles(
-        files.list.filter(
-          (file) =>
-            file.folderPath.split('/').filter(Boolean).join('/') === folderPath,
-        ),
-      );
-    }
-  }, [files.list, folders.current]);
+  const viewMode = context.config.viewMode.default;
+  const filesData = filters.filteredFiles || files.list;
 
   return (
     <section className="w-full space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">
-          {folders.current ? 'Folders' : 'Files'}
+          Folders ({folders.list?.children?.length || 0})
         </h2>
-        <Header
-          currentView={viewMode}
-          setView={context.preferences.viewMode.set}
-        />
       </div>
 
-      {folders.current?.children && folders.current.children.length > 0 ? (
+      {folders.current?.children && folders.current?.children?.length > 0 ? (
         <FolderList
-          folders={folders.current.children}
+          folders={
+            folders.current.name === "root"
+              ? (folders.list?.children as TDosyaFolder[])
+              : folders.current?.children || []
+          }
           viewMode={viewMode}
           setCurrentFolder={folders.setCurrentFolder}
         />
@@ -51,7 +38,30 @@ export const DosyaGrid = () => {
 
           <Button
             onClick={() => {
-              window.alert('Create Folder');
+              context.state.setLoading(true);
+
+              const folderData = {
+                id: createId(),
+                key: folders.current
+                  ? `${folders.current?.key}/new-folder4`
+                  : "new-folder 4",
+                name: "New Folder 4",
+                parentId: folders.current?.id || "root",
+                children: [],
+                metadata: {
+                  tag: "new-folder",
+                },
+              } as TDosyaFolder;
+
+              folders.create(folderData, async (folder) => {
+                const createdFolder = await createFolder(folder.key);
+
+                folders.setList(createdFolder.data as TDosyaFolder, () => {
+                  context.state.setLoading(false);
+
+                  folders.setCurrentFolder(folder);
+                });
+              });
             }}
           >
             Create Folder
@@ -59,25 +69,27 @@ export const DosyaGrid = () => {
         </div>
       )}
 
-      <div className="pt-4 border-t border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Files ({currentFolderFiles.length})
-        </h2>
-        {currentFolderFiles.length > 0 ? (
-          <FileList
-            files={currentFolderFiles}
-            preview={preview}
-            viewMode={viewMode}
-          />
-        ) : (
-          <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            <FileIcon className="mx-auto text-gray-400" size={32} />
-            <p className="mt-2 text-sm text-gray-500">
-              No files in this folder
-            </p>
-          </div>
-        )}
-      </div>
+      {context.state.loading ? (
+        <div className="w-full h-full min-h-[200px] flex items-center justify-center">
+          <Loader2Icon size={44} className="animate-spin text-gray-400" />
+        </div>
+      ) : (
+        <div className="pt-4 border-t border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Files ({filesData?.length})
+          </h2>
+          {filesData?.length > 0 ? (
+            <FileList files={filesData} preview={preview} viewMode={viewMode} />
+          ) : (
+            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+              <FileIcon className="mx-auto text-gray-400" size={32} />
+              <p className="mt-2 text-sm text-gray-500">
+                No files in this folder
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 };

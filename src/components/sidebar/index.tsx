@@ -1,7 +1,7 @@
-import { useDosya } from '@/store';
-import { UploadIcon } from 'lucide-react';
-import { DosyaTree } from '../dosya-tree';
-import { Button } from '../ui/button';
+import { useDosya } from "@/store";
+import { UploadIcon } from "lucide-react";
+import { DosyaTree } from "../dosya-tree";
+import { Button } from "../ui/button";
 
 export const DosyaSidebar = () => {
   const { context, uploader } = useDosya();
@@ -16,7 +16,7 @@ export const DosyaSidebar = () => {
       )}
 
       <Button
-        className="w-full"
+        className="w-full rounded-md bg-blue-400 text-white"
         onClick={() => {
           uploader.toggle();
         }}

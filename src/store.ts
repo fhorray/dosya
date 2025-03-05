@@ -1,19 +1,38 @@
-import { create } from 'zustand';
-import { TDosyaFile as DosyaFile, TFolderTree } from './types';
-import { buildTree } from './utils/build-tree';
+import { create } from "zustand";
+import { TDosyaFile as DosyaFile, TDosyaFolder } from "./types";
+import { formatBytes } from "./utils/format-bytes";
 
-type AsyncOrSyncFunction<T extends any[] = [], R = void> = (
+// FILTERS
+type SearchProps = {
+  name?: string;
+  format?: string;
+  size?: string;
+  tag?: string;
+  color?: string;
+};
+
+type AsyncOrSyncFunction<T extends unknown[] = [], R = void> = (
   ...args: T
 ) => R | Promise<R>;
 
-export type DosyaPreferences = {
+type ConfigProps = {
   viewMode: {
-    default: 'grid' | 'list';
-    set: (value: 'grid' | 'list') => void;
+    default: "grid" | "list";
+    set: (value: "grid" | "list") => void;
   };
+  defaultFolder: string;
+  baseUrl: string;
+};
+
+export type DosyaConfig = {
+  defaultView: ConfigProps["viewMode"]["default"];
+  defaultFolder: string;
+  baseUrl: string;
 };
 
 export type DosyaContext = {
+  config: ConfigProps;
+  setConfig: (config: DosyaConfig) => void;
   error: {
     message: string;
     setMessage: (message: string) => void;
@@ -23,7 +42,6 @@ export type DosyaContext = {
     loading: boolean;
     setLoading: (state: boolean) => void;
   };
-  preferences: DosyaPreferences;
 };
 
 export type DosyaProps = {
@@ -31,8 +49,25 @@ export type DosyaProps = {
 
   files: {
     list: DosyaFile[];
-    setList: (files: DosyaFile[]) => void;
+    setList: (
+      files: DosyaFile[],
+      onSuccess?: (files?: DosyaFile[]) => void
+    ) => void;
     upload: (files: File[], callback?: AsyncOrSyncFunction<[], void>) => void;
+  };
+
+  folders: {
+    list: TDosyaFolder | null;
+    create: (
+      folder: TDosyaFolder,
+      onSuccess: (folder: TDosyaFolder) => void
+    ) => void;
+    setList: (
+      folders: TDosyaFolder | null,
+      onSuccess?: (folders?: TDosyaFolder) => void
+    ) => void;
+    current: TDosyaFolder | null;
+    setCurrentFolder: (folder: TDosyaFolder | null) => void;
   };
 
   uploader: {
@@ -40,29 +75,12 @@ export type DosyaProps = {
     toggle: () => void;
   };
 
-  folders: {
-    list: TFolderTree | null;
-    setList: (folders: TFolderTree[]) => void;
-    current: TFolderTree | null;
-    setCurrentFolder: (folder: TFolderTree | null) => void;
-  };
-
   filters: {
-    search: string;
-    setSearch: ({
-      file,
-      format,
-      size,
-      tag,
-      color,
-    }: {
-      file: string;
-      format: string;
-      size: number;
-      tag: string;
-      color: string;
-    }) => void;
+    search: SearchProps | null;
+    setSearch: (search: SearchProps) => void;
     reset: () => void;
+    filteredFiles: DosyaFile[] | null;
+    setFilteredFiles: (files: DosyaFile[]) => void;
   };
 
   preview: {
@@ -78,7 +96,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
   // CONTEXT
   context: {
     error: {
-      message: '',
+      message: "",
       setMessage: (message) =>
         set((state) => ({
           context: {
@@ -95,7 +113,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
           context: {
             ...state.context,
             error: {
-              message: '',
+              message: "",
               setMessage: state.context.error.setMessage,
               clear: state.context.error.clear,
             },
@@ -103,6 +121,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
         })),
     },
 
+    // states (loading)
     state: {
       loading: false,
       setLoading: (loading) => {
@@ -120,33 +139,52 @@ export const useDosya = create<DosyaProps>((set, get) => ({
       },
     },
 
-    preferences: {
+    // configuration
+    config: {
+      defaultFolder: "/",
+      baseUrl: "/",
       viewMode: {
-        default: 'grid',
-        set: (value) =>
+        default: "grid",
+        set: (value) => {
           set((state) => ({
             context: {
               ...state.context,
-              preferences: {
-                ...state.context.preferences,
+              config: {
+                ...state.context.config,
                 viewMode: {
-                  ...state.context.preferences.viewMode,
+                  ...state.context.config.viewMode,
                   default: value,
                 },
               },
             },
-          })),
+          }));
+        },
       },
+    },
+
+    // set configuration
+    setConfig: (config) => {
+      set((state) => ({
+        context: {
+          ...state.context,
+          config: {
+            ...state.context.config,
+            ...config,
+          },
+        },
+      }));
     },
   },
 
   // FILES
   files: {
     list: [],
-    setList: (files) => {
+    setList: (files, onSuccess) => {
       set((state) => ({
         files: { ...state.files, list: files },
       }));
+
+      onSuccess?.(get().files.list);
     },
     upload: async (files, uploadFunction) => {
       // clear error
@@ -154,7 +192,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
         context: {
           ...state.context,
           error: {
-            message: '',
+            message: "",
             setMessage: state.context.error.setMessage,
             clear: state.context.error.clear,
           },
@@ -167,7 +205,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
             context: {
               ...state.context,
               error: {
-                message: 'File or folder not found',
+                message: "File or folder not found",
                 setMessage: state.context.error.setMessage,
                 clear: state.context.error.clear,
               },
@@ -195,24 +233,32 @@ export const useDosya = create<DosyaProps>((set, get) => ({
   // FODLERS
   folders: {
     list: null,
-    setList: (folders) =>
+
+    create: (folder, onSuccess) => {
+      onSuccess?.(folder);
+    },
+
+    setList: (folders, onSuccess) => {
       set((state) => ({
         folders: {
           ...state.folders,
-          list: buildTree(folders),
+          list: folders,
         },
-      })),
+      }));
+
+      onSuccess?.(get().folders.list as TDosyaFolder);
+    },
     current: null,
     setCurrentFolder: (folder) =>
       set((state) => ({
         folders: {
           ...state.folders,
           current: {
-            id: folder?.id || 'root',
-            name: folder?.name || 'root',
-            key: folder?.key || 'root',
+            id: folder?.id || "root",
+            name: folder?.name || "root",
+            key: folder?.key || "root",
             children: folder?.children || [],
-            parentId: folder?.parentId || 'root',
+            parentId: folder?.parentId || "root",
             ...folder,
           },
         },
@@ -221,16 +267,41 @@ export const useDosya = create<DosyaProps>((set, get) => ({
 
   // FILTERS
   filters: {
-    search: '',
-    setSearch: ({ file, format, size, tag, color }) =>
+    search: {
+      name: "",
+      format: "",
+      size: "",
+      tag: "",
+      color: "",
+    },
+    setSearch: (search) => {
+      const files = get().files.list.filter((file) => {
+        const nameData = file.name
+          .toLowerCase()
+          .includes(search.name?.toLowerCase() as string);
+
+        const sizeData =
+          formatBytes(file.size).value >= parseInt(search.size as string);
+
+        return nameData || sizeData;
+      });
+
       set((state) => ({
         filters: {
           ...state.filters,
-          search: [file, format, size, tag, color].join(' '),
+          filteredFiles: files,
+          search: {
+            ...state.filters.search, // Mantém os valores anteriores
+            ...search,
+          },
         },
-      })),
+      }));
+    },
+    filteredFiles: null,
+    setFilteredFiles: (files) =>
+      set((state) => ({ filters: { ...state.filters, filteredFiles: files } })),
     reset: () =>
-      set((state) => ({ filters: { ...state.filters, search: '' } })),
+      set((state) => ({ filters: { ...state.filters, search: null } })),
   },
 
   // PREVIEW

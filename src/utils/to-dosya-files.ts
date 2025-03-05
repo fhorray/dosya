@@ -1,5 +1,5 @@
-import { TDosyaFile } from '@/types';
-import { createId } from './create-id';
+import { TDosyaFile } from "@/types";
+import { createId } from "./create-id";
 
 // Tipo para as opções de chaves dinâmicas e callback
 type Options = {
@@ -24,7 +24,7 @@ type Options = {
  */
 const getValueByPriority = <T>(
   obj: Record<string, unknown>,
-  possibleKeys: string[],
+  possibleKeys: string[]
 ): T | undefined => {
   for (const key of possibleKeys) {
     if (obj[key] !== undefined) {
@@ -36,7 +36,7 @@ const getValueByPriority = <T>(
 
 export const toDosyaFiles = <T>(
   data: T,
-  { onSuccess, keys }: Options = {},
+  { onSuccess, keys }: Options = {}
 ): TDosyaFile[] => {
   let filesData: TDosyaFile[] = [];
 
@@ -44,58 +44,58 @@ export const toDosyaFiles = <T>(
     const files = data
       .map((item) => {
         // Se o item for um objeto, extrai as propriedades esperadas
-        if (typeof item === 'object' && item !== null) {
+        if (typeof item === "object" && item !== null) {
           const obj = item as Record<string, unknown>;
 
           const key =
-            getValueByPriority<string>(obj, [keys?.key ?? 'key']) || '';
+            getValueByPriority<string>(obj, [keys?.key ?? "key"]) || "";
           const name =
             getValueByPriority<string>(obj, [
-              keys?.name ?? 'name',
-              'title',
-              'filename',
+              keys?.name ?? "name",
+              "title",
+              "filename",
             ]) ||
-            key.split('/').pop() ||
-            'unknown';
-          const extension = name.includes('.')
-            ? name.substring(name.lastIndexOf('.'))
-            : '';
+            key.split("/").pop() ||
+            "unknown";
+          const extension = name.includes(".")
+            ? name.substring(name.lastIndexOf("."))
+            : "";
           const size =
             getValueByPriority<number>(obj, [
-              keys?.size ?? 'size',
-              'fileSize',
-              'bytes',
+              keys?.size ?? "size",
+              "fileSize",
+              "bytes",
             ]) || 0;
           const lastModified =
             getValueByPriority<string>(obj, [
-              keys?.lastModified ?? 'lastModified',
-              'uploaded',
-              'lastUpdated',
-              'updatedAt',
-              'modifiedAt',
-            ]) || '';
-          const folderPath = key.includes('/')
-            ? key.substring(0, key.lastIndexOf('/') + 1)
-            : '';
+              keys?.lastModified ?? "lastModified",
+              "uploaded",
+              "lastUpdated",
+              "updatedAt",
+              "modifiedAt",
+            ]) || "";
+          const folderPath = key.includes("/")
+            ? key.substring(0, key.lastIndexOf("/") + 1)
+            : "";
 
           // Tratamento de propriedades opcionais corretamente
           const url = getValueByPriority<string>(obj, [
-            keys?.url ?? 'url',
-            'downloadLink',
-            'source',
+            keys?.url ?? "url",
+            "downloadLink",
+            "source",
           ]);
           const metadata = getValueByPriority<Record<string, unknown>>(obj, [
-            keys?.metadata ?? 'metadata',
-            'meta',
-            'customMetadata',
+            keys?.metadata ?? "metadata",
+            "meta",
+            "customMetadata",
           ]);
           const height = getValueByPriority<number>(obj, [
-            keys?.height ?? 'height',
-            'imgHeight',
+            keys?.height ?? "height",
+            "imgHeight",
           ]);
           const width = getValueByPriority<number>(obj, [
-            keys?.width ?? 'width',
-            'imgWidth',
+            keys?.width ?? "width",
+            "imgWidth",
           ]);
 
           return {
@@ -114,27 +114,27 @@ export const toDosyaFiles = <T>(
         }
 
         // Se o item for uma string, trata como caminho do arquivo
-        if (typeof item === 'string') {
+        if (typeof item === "string") {
           return {
             id: createId(),
             key: item,
-            name: item.split('/').pop() || 'unknown',
-            extension: item.includes('.')
-              ? item.substring(item.lastIndexOf('.'))
-              : '',
+            name: item.split("/").pop() || "unknown",
+            extension: item.includes(".")
+              ? item.substring(item.lastIndexOf("."))
+              : "",
             size: 0,
-            lastModified: '',
-            folderPath: item.includes('/')
-              ? item.substring(0, item.lastIndexOf('/') + 1)
-              : '',
+            lastModified: "",
+            folderPath: item.includes("/")
+              ? item.substring(0, item.lastIndexOf("/") + 1)
+              : "",
           };
         }
 
         return null; // Caso o item não seja um objeto nem string
       })
-      .filter((file): file is TDosyaFile => file !== null);
+      .filter((file) => file !== null);
 
-    filesData = files;
+    filesData = files as TDosyaFile[];
   }
 
   onSuccess?.(filesData); // Executa a função de sucesso

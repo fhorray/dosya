@@ -1,17 +1,17 @@
-import { DosyaPreferences } from '@/store';
-import { TFolderTree } from '@/types';
-import { FolderIcon } from 'lucide-react';
+import { DosyaConfig } from "@/store";
+import { TDosyaFolder } from "@/types";
+import { FolderIcon } from "lucide-react";
 
 export const FolderList = ({
   folders,
   setCurrentFolder,
   viewMode,
 }: {
-  folders: TFolderTree[];
-  setCurrentFolder: (folder: TFolderTree) => void;
-  viewMode: DosyaPreferences['viewMode']['default'];
-}) =>
-  viewMode === 'grid' || viewMode === 'list' ? (
+  folders: TDosyaFolder[];
+  setCurrentFolder: (folder: TDosyaFolder) => void;
+  viewMode: DosyaConfig["defaultView"];
+}) => {
+  return viewMode === "grid" || viewMode === "list" ? (
     <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {folders.map((folder, index) => (
         <li
@@ -20,7 +20,11 @@ export const FolderList = ({
           className="cursor-pointer transition-transform hover:scale-105"
         >
           <div className="w-full h-28 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white p-4 flex flex-col items-center justify-center gap-2">
-            <FolderIcon className="text-amber-500" size={28} />
+            <FolderIcon
+              className="text-amber-500"
+              size={28}
+              style={{ backgroundColor: folder.metadata }}
+            />
             <span className="text-sm font-medium text-gray-700 truncate w-full text-center">
               {folder.name}
             </span>
@@ -53,3 +57,4 @@ export const FolderList = ({
       ))}
     </ul>
   );
+};

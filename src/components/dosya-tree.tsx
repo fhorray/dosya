@@ -1,15 +1,17 @@
-import { useDosya } from '@/store';
-import { TFolderTree } from '@/types';
+import { fetchFiles } from "@/fetch";
+import { cn } from "@/lib/utils";
+import { useDosya } from "@/store";
+import { TDosyaFolder } from "@/types";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
   FolderIcon,
   FolderOpenIcon,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from "lucide-react";
+import React, { useState } from "react";
 
 interface IDosyaTreeProps {
-  itemRenderer?: React.ComponentType<{ folder: TFolderTree }>;
+  itemRenderer?: React.ComponentType<{ folder: TDosyaFolder }>;
 }
 
 export const DosyaTree = ({ itemRenderer }: IDosyaTreeProps) => {
@@ -18,7 +20,7 @@ export const DosyaTree = ({ itemRenderer }: IDosyaTreeProps) => {
 
   return (
     <ul className="text-sm">
-      {folders.list?.children?.map((folder: TFolderTree) => (
+      {folders.list?.children?.map((folder: TDosyaFolder) => (
         <React.Fragment key={folder.id}>
           {ItemRenderer ? (
             <ItemRenderer folder={folder} />
@@ -31,21 +33,28 @@ export const DosyaTree = ({ itemRenderer }: IDosyaTreeProps) => {
   );
 };
 
-export const FolderItem = ({ folder }: { folder: TFolderTree }) => {
+export const FolderItem = ({ folder }: { folder: TDosyaFolder }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { folders } = useDosya();
+  const { folders, files, context } = useDosya();
 
   const hasChildren = folder.children && folder.children.length > 0;
 
+  const isCurrentPath = folders.current?.key === folder.key;
+
   return (
     <li className="py-0">
-      <div className="flex items-center group">
+      <div
+        className={cn(
+          "flex items-center group my-1 rounded-md",
+          isCurrentPath && "bg-gray-200 hover:bg-gray-100"
+        )}
+      >
         <button
           className={`mr-1 p-0.5 rounded-sm transition-colors cursor-pointer ${
-            hasChildren ? 'visible' : 'invisible'
+            hasChildren ? "visible" : "invisible"
           }`}
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? 'Collapse folder' : 'Expand folder'}
+          aria-label={isOpen ? "Collapse folder" : "Expand folder"}
         >
           {isOpen ? (
             <ChevronDownIcon size={14} className="text-gray-500" />
@@ -55,14 +64,31 @@ export const FolderItem = ({ folder }: { folder: TFolderTree }) => {
         </button>
 
         <button
-          className="flex cursor-pointer items-center w-full py-1 px-2 rounded-md hover:bg-gray-200 transition-colors text-left"
-          onClick={() => {
+          className={
+            "flex cursor-pointer items-center w-full py-1 px-0 rounded-md transition-colors text-left"
+          }
+          onClick={async () => {
             setIsOpen(!isOpen);
             folders.setCurrentFolder(folder.children ? folder : folders.list);
+            context.state.setLoading(true);
+
+            const filesData = await fetchFiles({
+              folder: folder.key,
+              limit: 100,
+              page: 1,
+            });
+
+            files.setList(filesData.data.files, () => {
+              context.state.setLoading(false);
+            });
           }}
         >
           <span className="mr-2 text-blue-600">
-            {isOpen ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} />}
+            {isOpen && isCurrentPath ? (
+              <FolderOpenIcon size={16} />
+            ) : (
+              <FolderIcon size={16} />
+            )}
           </span>
           <span className="font-medium text-gray-700">{folder.name}</span>
         </button>
@@ -70,7 +96,7 @@ export const FolderItem = ({ folder }: { folder: TFolderTree }) => {
 
       {/* SUBFOLDERS */}
       {isOpen && folder.children && folder.children.length > 0 && (
-        <ul className="pl-5 border-l border-gray-200 ml-2 mt-1">
+        <ul className="pl-2 border-l border-gray-200 ml-2 mt-1">
           {folder.children.map((child) => (
             <FolderItem key={child.id} folder={child} />
           ))}
