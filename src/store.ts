@@ -1,6 +1,11 @@
-import { create } from "zustand";
-import { TDosyaFile as DosyaFile, TDosyaFolder } from "./types";
-import { formatBytes } from "./utils/format-bytes";
+import { create } from 'zustand';
+import { TDosyaFile as DosyaFile, TDosyaFile, TDosyaFolder } from './types';
+import { formatBytes } from './utils/format-bytes';
+
+type Options<T = any> = {
+  onSuccess?: (data: T) => void;
+  onError?: (error: T) => void;
+};
 
 // FILTERS
 type SearchProps = {
@@ -17,15 +22,15 @@ type AsyncOrSyncFunction<T extends unknown[] = [], R = void> = (
 
 type ConfigProps = {
   viewMode: {
-    default: "grid" | "list";
-    set: (value: "grid" | "list") => void;
+    default: 'grid' | 'list';
+    set: (value: 'grid' | 'list') => void;
   };
   defaultFolder: string;
   baseUrl: string;
 };
 
 export type DosyaConfig = {
-  defaultView: ConfigProps["viewMode"]["default"];
+  defaultView: ConfigProps['viewMode']['default'];
   defaultFolder: string;
   baseUrl: string;
 };
@@ -48,10 +53,10 @@ export type DosyaProps = {
   context: DosyaContext;
 
   files: {
-    list: DosyaFile[];
+    list: DosyaFile[] | null;
     setList: (
-      files: DosyaFile[],
-      onSuccess?: (files?: DosyaFile[]) => void
+      fn: () => Promise<DosyaFile[] | null> | DosyaFile[] | null,
+      options?: Options<DosyaFile[]>,
     ) => void;
     upload: (files: File[], callback?: AsyncOrSyncFunction<[], void>) => void;
   };
@@ -60,11 +65,11 @@ export type DosyaProps = {
     list: TDosyaFolder | null;
     create: (
       folder: TDosyaFolder,
-      onSuccess: (folder: TDosyaFolder) => void
+      onSuccess: (folder: TDosyaFolder) => void,
     ) => void;
     setList: (
-      folders: TDosyaFolder | null,
-      onSuccess?: (folders?: TDosyaFolder) => void
+      fn: () => Promise<TDosyaFolder | null> | TDosyaFolder | null,
+      options?: Options<TDosyaFolder>,
     ) => void;
     current: TDosyaFolder | null;
     setCurrentFolder: (folder: TDosyaFolder | null) => void;
@@ -96,7 +101,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
   // CONTEXT
   context: {
     error: {
-      message: "",
+      message: '',
       setMessage: (message) =>
         set((state) => ({
           context: {
@@ -113,7 +118,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
           context: {
             ...state.context,
             error: {
-              message: "",
+              message: '',
               setMessage: state.context.error.setMessage,
               clear: state.context.error.clear,
             },
@@ -141,10 +146,10 @@ export const useDosya = create<DosyaProps>((set, get) => ({
 
     // configuration
     config: {
-      defaultFolder: "/",
-      baseUrl: "/",
+      defaultFolder: '/',
+      baseUrl: '/',
       viewMode: {
-        default: "grid",
+        default: 'grid',
         set: (value) => {
           set((state) => ({
             context: {
@@ -176,15 +181,53 @@ export const useDosya = create<DosyaProps>((set, get) => ({
     },
   },
 
+  // UPLOADER
+  uploader: {
+    isOpen: false,
+    toggle: () =>
+      set((state) => ({
+        uploader: { ...state.uploader, isOpen: !state.uploader.isOpen },
+      })),
+  },
+
   // FILES
   files: {
-    list: [],
-    setList: (files, onSuccess) => {
+    list: null,
+    setList: async (fn, options) => {
       set((state) => ({
-        files: { ...state.files, list: files },
+        context: {
+          ...state.context,
+          state: {
+            ...state.context.state,
+            loading: true,
+          },
+        },
       }));
 
-      onSuccess?.(get().files.list);
+      try {
+        const result = fn instanceof Function ? await fn() : fn;
+
+        set((state) => ({
+          files: {
+            ...state.files,
+            list: result,
+          },
+        }));
+
+        options?.onSuccess?.(result as TDosyaFile[]);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        set((state) => ({
+          context: {
+            ...state.context,
+            state: {
+              ...state.context.state,
+              loading: false,
+            },
+          },
+        }));
+      }
     },
     upload: async (files, uploadFunction) => {
       // clear error
@@ -192,7 +235,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
         context: {
           ...state.context,
           error: {
-            message: "",
+            message: '',
             setMessage: state.context.error.setMessage,
             clear: state.context.error.clear,
           },
@@ -205,7 +248,7 @@ export const useDosya = create<DosyaProps>((set, get) => ({
             context: {
               ...state.context,
               error: {
-                message: "File or folder not found",
+                message: 'File or folder not found',
                 setMessage: state.context.error.setMessage,
                 clear: state.context.error.clear,
               },
@@ -217,36 +260,69 @@ export const useDosya = create<DosyaProps>((set, get) => ({
         uploadFunction?.();
       } catch (error) {
         console.error(error);
+      } finally {
+        set((state) => ({
+          context: {
+            ...state.context,
+            state: {
+              ...state.context.state,
+              loading: false,
+            },
+          },
+        }));
       }
     },
   },
 
-  // UPLOADER
-  uploader: {
-    isOpen: false,
-    toggle: () =>
-      set((state) => ({
-        uploader: { ...state.uploader, isOpen: !state.uploader.isOpen },
-      })),
-  },
-
-  // FODLERS
+  // FOLDERS
   folders: {
     list: null,
-
     create: (folder, onSuccess) => {
       onSuccess?.(folder);
     },
 
-    setList: (folders, onSuccess) => {
+    setList: async (fn, options) => {
       set((state) => ({
-        folders: {
-          ...state.folders,
-          list: folders,
+        context: {
+          ...state.context,
+          state: {
+            ...state.context.state,
+            loading: true,
+          },
         },
       }));
 
-      onSuccess?.(get().folders.list as TDosyaFolder);
+      try {
+        const result = fn instanceof Function ? await fn() : await fn;
+
+        set((state) => ({
+          context: {
+            ...state.context,
+            state: {
+              ...state.context.state,
+              loading: true,
+            },
+          },
+          folders: {
+            ...state.folders,
+            list: result,
+          },
+        }));
+
+        options?.onSuccess?.(result as TDosyaFolder);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        set((state) => ({
+          context: {
+            ...state.context,
+            state: {
+              ...state.context.state,
+              loading: false,
+            },
+          },
+        }));
+      }
     },
     current: null,
     setCurrentFolder: (folder) =>
@@ -254,11 +330,11 @@ export const useDosya = create<DosyaProps>((set, get) => ({
         folders: {
           ...state.folders,
           current: {
-            id: folder?.id || "root",
-            name: folder?.name || "root",
-            key: folder?.key || "root",
+            id: folder?.id || 'root',
+            name: folder?.name || 'root',
+            key: folder?.key || 'root',
             children: folder?.children || [],
-            parentId: folder?.parentId || "root",
+            parentId: folder?.parentId || 'root',
             ...folder,
           },
         },
@@ -268,14 +344,14 @@ export const useDosya = create<DosyaProps>((set, get) => ({
   // FILTERS
   filters: {
     search: {
-      name: "",
-      format: "",
-      size: "",
-      tag: "",
-      color: "",
+      name: '',
+      format: '',
+      size: '',
+      tag: '',
+      color: '',
     },
     setSearch: (search) => {
-      const files = get().files.list.filter((file) => {
+      const files = get().files.list?.filter((file) => {
         const nameData = file.name
           .toLowerCase()
           .includes(search.name?.toLowerCase() as string);
@@ -289,9 +365,9 @@ export const useDosya = create<DosyaProps>((set, get) => ({
       set((state) => ({
         filters: {
           ...state.filters,
-          filteredFiles: files,
+          filteredFiles: files ?? null,
           search: {
-            ...state.filters.search, // Mantém os valores anteriores
+            ...state.filters.search,
             ...search,
           },
         },

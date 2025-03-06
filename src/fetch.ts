@@ -1,9 +1,4 @@
-import { TDosyaFile, TDosyaFolder } from "./types";
-
-type FilesReponse = {
-  cursor: string | undefined;
-  files: TDosyaFile[];
-};
+import { TDosyaFile, TDosyaFolder } from './types';
 
 export const fetchFiles = async ({
   folder,
@@ -13,7 +8,7 @@ export const fetchFiles = async ({
   page: string | number;
   limit: number;
   folder: string;
-}): Promise<{ data: FilesReponse }> => {
+}): Promise<TDosyaFile[] | null> => {
   try {
     // return new Promise<R2ObjectsList>((resolve) => {
     //   setTimeout(() => {
@@ -21,11 +16,11 @@ export const fetchFiles = async ({
     //   }, 3000);
     // });
 
-    const res = await fetch("http://127.0.0.1:8787/files/list", {
-      credentials: "include",
-      method: "POST",
+    const res = await fetch('http://127.0.0.1:8787/files/list', {
+      credentials: 'include',
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         folder,
@@ -34,39 +29,29 @@ export const fetchFiles = async ({
       }),
     });
     const data = await res.json();
-    return data;
+    return data.data as TDosyaFile[];
   } catch (error) {
     console.error(error);
-    return { data: { files: [], cursor: "" } };
+    return null;
   }
 };
 
-export const fetchFolders = async (): Promise<{
-  data: TDosyaFolder | null;
-}> => {
+export const fetchFolders = async (): Promise<TDosyaFolder | null> => {
   try {
-    // return new Promise<R2ObjectsList>((resolve) => {
-    //   setTimeout(() => {
-    //     resolve(r2MockData);
-    //   }, 3000);
-    // });
-
-    const res = await fetch("http://127.0.0.1:8787/files/list/folders", {
-      credentials: "include",
+    const res = await fetch('http://127.0.0.1:8787/files/list/folders', {
+      credentials: 'include',
     });
     const data = await res.json();
-    return data;
+    return data.data as TDosyaFolder;
   } catch (error) {
     console.error(error);
-    return { data: null };
+    return null;
   }
 };
 
 export const createFolder = async (
-  name: string
-): Promise<{
-  data: TDosyaFolder | null;
-}> => {
+  name: string,
+): Promise<TDosyaFolder | null> => {
   try {
     // return new Promise<R2ObjectsList>((resolve) => {
     //   setTimeout(() => {
@@ -74,18 +59,18 @@ export const createFolder = async (
     //   }, 3000);
     // });
 
-    const res = await fetch("http://127.0.0.1:8787/files/create/folder", {
-      credentials: "include",
-      method: "POST",
+    const res = await fetch('http://127.0.0.1:8787/files/create/folder', {
+      credentials: 'include',
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name }),
     });
     const data = await res.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error(error);
-    return { data: null };
+    return null;
   }
 };

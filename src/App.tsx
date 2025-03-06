@@ -1,11 +1,10 @@
-import { useEffect } from "react";
-import { DosyaGrid } from "./components/grid";
-import { Header } from "./components/grid/header";
-import { DosyaSidebar } from "./components/sidebar";
-import { fetchFiles, fetchFolders } from "./fetch";
-import { useDosya } from "./store";
-import { TDosyaFolder } from "./types";
-import { Filters } from "./components/filters";
+import { useEffect } from 'react';
+import { Filters } from './components/filters';
+import { DosyaGrid } from './components/grid';
+import { Header } from './components/grid/header';
+import { DosyaSidebar } from './components/sidebar';
+import { fetchFiles, fetchFolders } from './fetch';
+import { useDosya } from './store';
 
 function App() {
   const { folders, files, context, filters } = useDosya();
@@ -16,18 +15,19 @@ function App() {
   useEffect(() => {
     // fetch images
     const fetchData = async () => {
-      const filesData = await fetchFiles({
-        folder: "",
-        limit: 100,
-        page: 1,
-      });
-      const foldersData = await fetchFolders();
+      files.setList(async () =>
+        fetchFiles({
+          folder: '',
+          limit: 100,
+          page: 1,
+        }),
+      );
 
-      files.setList(filesData.data.files, () => {
-        context.state.setLoading(false);
+      folders.setList(async () => fetchFolders(), {
+        onSuccess: (data) => {
+          context.state.setLoading(false);
+        },
       });
-
-      folders.setList(foldersData.data as TDosyaFolder);
     };
 
     fetchData();

@@ -1,6 +1,6 @@
-import { DosyaProps } from "@/store";
-import { TDosyaFile } from "@/types";
-import { FileIcon } from "./file-icon";
+import { DosyaProps } from '@/store';
+import { TDosyaFile } from '@/types';
+import { FileIcon } from './file-icon';
 
 export const FileList = ({
   files,
@@ -8,10 +8,10 @@ export const FileList = ({
   viewMode,
 }: {
   files: TDosyaFile[];
-  preview: DosyaProps["preview"];
+  preview: DosyaProps['preview'];
   viewMode: string;
 }) => {
-  return viewMode === "grid" ? (
+  return viewMode === 'grid' ? (
     <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {files.map((file, index) => (
         <li
