@@ -1,6 +1,7 @@
 import { DosyaPreview } from "@/components/dosya-preview";
 import { CreateFolder } from "@/components/modals/create-folder";
 import { FileUploader } from "@/components/modals/uploader";
+import { Toaster } from "@/components/ui/sonner";
 import { useDosya } from "@/store";
 import { DosyaConfig } from "@/types";
 import { useEffect } from "react";
@@ -26,6 +27,7 @@ export const DosyaProvider = ({
   return (
     <>
       {children}
+      <Toaster />
       <FileUploader />
       <CreateFolder />
       <DosyaPreview />

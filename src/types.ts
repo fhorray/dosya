@@ -13,14 +13,20 @@ export type TDosyaFile<M = any> = {
 };
 
 // FOLDER TREE
-export type TDosyaFolder<M = any> = {
+export type TDosyaFolder<M = Record<any, any>> = {
   id?: string;
   key: string;
   name?: string;
   parentId?: string;
   files?: number; // show quantity of files inside the folder, use it to decide call the API or not
   children?: TDosyaFolder<M>[];
-  metadata?: M; // Metadados adicionais (opcional)
+  metadata?:
+    | (M & {
+        color?: string;
+        createdAt?: string;
+        updatedAt?: string;
+      })
+    | null;
 };
 
 // R2
@@ -103,19 +109,23 @@ export type DosyaProps = {
   folders: {
     list: TDosyaFolder | null;
     create: (
-      folder: TDosyaFolder,
-      onSuccess: (folder: TDosyaFolder) => void
+      fn: () => Promise<TDosyaFolder | null | void> | void,
+      options?: Options<TDosyaFolder>
+    ) => void;
+    delete: (
+      fn: () => Promise<TDosyaFolder | null | void> | void,
+      options?: Options<TDosyaFolder>
     ) => void;
     setList: (
       fn: () => Promise<TDosyaFolder | null> | TDosyaFolder | null,
       options?: Options<TDosyaFolder>
     ) => void;
     current: TDosyaFolder | null;
-    setCurrentFolder: (folder: TDosyaFolder | null) => void;
+    setCurrent: (folder: TDosyaFolder | null) => void;
 
     modal: {
       isOpen: boolean;
-      toggleOpen: () => void;
+      toggle: () => void;
     };
   };
 

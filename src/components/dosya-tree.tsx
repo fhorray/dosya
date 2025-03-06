@@ -8,6 +8,7 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
+
 import React, { useState } from "react";
 
 interface IDosyaTreeProps {
@@ -69,7 +70,7 @@ export const FolderItem = ({ folder }: { folder: TDosyaFolder }) => {
           }
           onClick={async () => {
             setIsOpen(!isOpen);
-            folders.setCurrentFolder(folder.children ? folder : folders.list);
+            folders.setCurrent(folder.children ? folder : folders.list);
             files.setList(async () =>
               fetchFiles({
                 folder: folder.key,

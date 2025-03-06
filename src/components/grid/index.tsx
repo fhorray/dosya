@@ -28,14 +28,14 @@ export const DosyaGrid = () => {
               ? (folders.list?.children as TDosyaFolder[])
               : folders.current?.children || []
           }
-          setCurrentFolder={folders.setCurrentFolder}
+          setCurrent={folders.setCurrent}
         />
       ) : (
         <div className="flex flex-col justify-center items-center gap-2 py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
           <FolderIcon className="text-gray-400" size={32} />
           <p className="text-sm text-gray-500">No folders found</p>
 
-          <Button onClick={folders.modal.toggleOpen}>Create Folder</Button>
+          <Button onClick={folders.modal.toggle}>Create Folder</Button>
         </div>
       )}
 

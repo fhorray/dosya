@@ -16,15 +16,15 @@ export const Header = ({
       {/* BREADCRUMBS */}
       <Breadbrumbs />
 
-      <div>
+      <div className="flex items-center gap-2">
         {["grid", "list"].map((view) => (
           <Button
             key={view}
+            size={"icon"}
+            variant={currentView === view ? "default" : "ghost"}
             onClick={() => setView(view as DosyaConfig["defaultView"])}
             className={`p-2 rounded-md ${
-              currentView === view
-                ? "bg-blue-100 text-blue-600 border-0"
-                : "bg-transparent border-0 text-gray-500 hover:bg-gray-100"
+              currentView === view ? "bg-blue-100 text-blue-600 border-0" : ""
             }`}
             aria-label={`${view} view`}
           >
