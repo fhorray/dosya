@@ -6,4 +6,4 @@ export type {
   SearchProps,
   TDosyaFile,
   TDosyaFolder,
-} from "../src/types";
+} from '../src/types';

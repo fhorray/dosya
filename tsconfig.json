@@ -11,7 +11,7 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,

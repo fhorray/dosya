@@ -1,2 +1,2 @@
-export { DosyaProvider } from "../src/providers/dosya-provider";
-export { useDosya } from "../src/store";
+export * from '../src/providers/dosya-provider';
+export * from '../src/store';
