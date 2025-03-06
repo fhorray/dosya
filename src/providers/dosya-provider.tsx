@@ -1,6 +1,8 @@
 import { DosyaPreview } from "@/components/dosya-preview";
-import { FileUploader } from "@/components/uploader";
-import { DosyaConfig, useDosya } from "@/store";
+import { CreateFolder } from "@/components/modals/create-folder";
+import { FileUploader } from "@/components/modals/uploader";
+import { useDosya } from "@/store";
+import { DosyaConfig } from "@/types";
 import { useEffect } from "react";
 
 export const DosyaProvider = ({
@@ -25,6 +27,7 @@ export const DosyaProvider = ({
     <>
       {children}
       <FileUploader />
+      <CreateFolder />
       <DosyaPreview />
     </>
   );

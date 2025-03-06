@@ -3,23 +3,17 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { DosyaProvider } from "./providers/dosya-provider.tsx";
-import { DosyaConfig } from "./store.ts";
+import { DosyaConfig } from "./types.ts";
 
 const config = {
-  defaultView: "list",
+  defaultView: "grid",
   baseUrl: "/baseurl",
   defaultFolder: "/defaultFolder",
 } satisfies DosyaConfig;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <DosyaProvider
-      config={{
-        defaultView: config.defaultView,
-        baseUrl: config.baseUrl,
-        defaultFolder: config.defaultFolder,
-      }}
-    >
+    <DosyaProvider config={config}>
       <App />
     </DosyaProvider>
   </StrictMode>

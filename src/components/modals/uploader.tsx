@@ -1,13 +1,10 @@
-import { AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { AnimatePresence } from "motion/react";
+import React, { useState } from "react";
 
-import { useDosya } from '@/store';
-import { TDosyaFile } from '@/types';
-import { createId } from '@/utils/create-id';
-import { getExtension } from '@/utils/get-extension';
-import { CheckIcon, FileIcon, UploadIcon, XIcon } from 'lucide-react';
-import { motion } from 'motion/react';
-import { Button } from './ui/button';
+import { useDosya } from "@/store";
+import { CheckIcon, FileIcon, UploadIcon, XIcon } from "lucide-react";
+import { motion } from "motion/react";
+import { Button } from "../ui/button";
 
 type FileUpload = {
   name: string;
@@ -62,34 +59,16 @@ export const FileUploader = () => {
   const handleSubmit = () => {
     files.upload(data, () => {
       files.upload(data, () => {
-        const folder = folders.current?.key || '';
+        const folder = folders.current?.key || "";
 
         // set error message if folder path is undefined
         if (!folder) {
-          context.error.setMessage('Folder not found');
+          context.error.setMessage("Folder not found");
           return;
         }
 
         // set new files array merging the old files with the new ones
-        files.setList([
-          ...files.list,
-          ...filesData.map((item) => {
-            return {
-              id: createId(),
-              name: item.file.name,
-              extension: getExtension(item.file),
-              size: item.file.size,
-              lastModified: item.file.lastModified.toString(),
-              folderPath: folder,
-              key: `${folders.current?.key}/${item.file.name}`,
-              file: item.file,
-              metadata: {
-                owner: 'Francy Santos',
-                description: 'This is a test file',
-              },
-            } as TDosyaFile;
-          }),
-        ]);
+        //files.setList();
       });
     });
   };
@@ -151,7 +130,7 @@ export const FileUploader = () => {
                               error: false,
                               file,
                             };
-                          }),
+                          })
                         );
                       }
                     }}

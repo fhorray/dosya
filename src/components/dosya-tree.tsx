@@ -1,14 +1,14 @@
-import { fetchFiles } from '@/fetch';
-import { cn } from '@/lib/utils';
-import { useDosya } from '@/store';
-import { TDosyaFolder } from '@/types';
+import { fetchFiles } from "@/fetch";
+import { cn } from "@/lib/utils";
+import { useDosya } from "@/store";
+import { TDosyaFolder } from "@/types";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
   FolderIcon,
   FolderOpenIcon,
-} from 'lucide-react';
-import React, { useState } from 'react';
+} from "lucide-react";
+import React, { useState } from "react";
 
 interface IDosyaTreeProps {
   itemRenderer?: React.ComponentType<{ folder: TDosyaFolder }>;
@@ -35,7 +35,7 @@ export const DosyaTree = ({ itemRenderer }: IDosyaTreeProps) => {
 
 export const FolderItem = ({ folder }: { folder: TDosyaFolder }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { folders, files, context } = useDosya();
+  const { folders, files } = useDosya();
 
   const hasChildren = folder.children && folder.children.length > 0;
 
@@ -45,16 +45,16 @@ export const FolderItem = ({ folder }: { folder: TDosyaFolder }) => {
     <li className="py-0">
       <div
         className={cn(
-          'flex items-center group my-1 rounded-md',
-          isCurrentPath && 'bg-gray-200 hover:bg-gray-100',
+          "flex items-center group my-1 rounded-md",
+          isCurrentPath && "bg-gray-200 hover:bg-gray-100"
         )}
       >
         <button
           className={`mr-1 p-0.5 rounded-sm transition-colors cursor-pointer ${
-            hasChildren ? 'visible' : 'invisible'
+            hasChildren ? "visible" : "invisible"
           }`}
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? 'Collapse folder' : 'Expand folder'}
+          aria-label={isOpen ? "Collapse folder" : "Expand folder"}
         >
           {isOpen ? (
             <ChevronDownIcon size={14} className="text-gray-500" />
@@ -65,23 +65,17 @@ export const FolderItem = ({ folder }: { folder: TDosyaFolder }) => {
 
         <button
           className={
-            'flex cursor-pointer items-center w-full py-1 px-0 rounded-md transition-colors text-left'
+            "flex cursor-pointer items-center w-full py-1 px-0 rounded-md transition-colors text-left"
           }
           onClick={async () => {
             setIsOpen(!isOpen);
             folders.setCurrentFolder(folder.children ? folder : folders.list);
-            files.setList(
-              async () =>
-                fetchFiles({
-                  folder: folder.key,
-                  limit: 100,
-                  page: 1,
-                }),
-              {
-                onSuccess: (data) => {
-                  context.state.setLoading(false);
-                },
-              },
+            files.setList(async () =>
+              fetchFiles({
+                folder: folder.key,
+                limit: 100,
+                page: 1,
+              })
             );
           }}
         >

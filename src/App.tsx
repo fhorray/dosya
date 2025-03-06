@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import { Filters } from './components/filters';
-import { DosyaGrid } from './components/grid';
-import { Header } from './components/grid/header';
-import { DosyaSidebar } from './components/sidebar';
-import { fetchFiles, fetchFolders } from './fetch';
-import { useDosya } from './store';
+import { useEffect } from "react";
+import { Filters } from "./components/filters";
+import { DosyaGrid } from "./components/grid";
+import { Header } from "./components/grid/header";
+import { DosyaSidebar } from "./components/sidebar";
+import { fetchFiles, fetchFolders } from "./fetch";
+import { useDosya } from "./store";
 
 function App() {
   const { folders, files, context, filters } = useDosya();
@@ -17,17 +17,13 @@ function App() {
     const fetchData = async () => {
       files.setList(async () =>
         fetchFiles({
-          folder: '',
+          folder: "",
           limit: 100,
           page: 1,
-        }),
+        })
       );
 
-      folders.setList(async () => fetchFolders(), {
-        onSuccess: (data) => {
-          context.state.setLoading(false);
-        },
-      });
+      folders.setList(async () => fetchFolders());
     };
 
     fetchData();

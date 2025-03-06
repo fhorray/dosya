@@ -1,7 +1,7 @@
-import { DosyaConfig } from "@/store";
 import { GridIcon, ListIcon } from "lucide-react";
 import { Breadbrumbs } from "../breadcrumbs";
 import { Button } from "../ui/button";
+import { DosyaConfig } from "@/types";
 
 // Component for view mode toggle
 export const Header = ({

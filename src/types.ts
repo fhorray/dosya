@@ -39,3 +39,104 @@ export type R2ObjectsList = {
   truncated: boolean;
   cursor?: string | null;
 };
+
+// STORE TYPES
+export type Options<T = any> = {
+  onSuccess?: (data: T) => void;
+  onError?: (error: Error) => void;
+};
+
+// FILTERS
+export type SearchProps = {
+  name?: string;
+  format?: string;
+  size?: string;
+  tag?: string;
+  color?: string;
+};
+
+export type AsyncOrSyncFunction<T extends unknown[] = [], R = void> = (
+  ...args: T
+) => R | Promise<R>;
+
+type ConfigProps = {
+  viewMode: {
+    default: "grid" | "list";
+    set: (value: "grid" | "list") => void;
+  };
+  defaultFolder: string;
+  baseUrl: string;
+};
+
+export type DosyaConfig = {
+  defaultView: ConfigProps["viewMode"]["default"];
+  defaultFolder: string;
+  baseUrl: string;
+};
+
+export type DosyaContext = {
+  config: ConfigProps;
+  setConfig: (config: DosyaConfig) => void;
+  error: {
+    message: string;
+    setMessage: (message: string) => void;
+    clear: () => void;
+  };
+  state: {
+    loading: boolean;
+    setLoading: (state: boolean) => void;
+  };
+};
+
+export type DosyaProps = {
+  context: DosyaContext;
+
+  files: {
+    list: TDosyaFile[] | null;
+    setList: (
+      fn: () => Promise<TDosyaFile[] | null> | TDosyaFile[] | null,
+      options?: Options<TDosyaFile[]>
+    ) => void;
+    upload: (files: File[], callback?: AsyncOrSyncFunction<[], void>) => void;
+  };
+
+  folders: {
+    list: TDosyaFolder | null;
+    create: (
+      folder: TDosyaFolder,
+      onSuccess: (folder: TDosyaFolder) => void
+    ) => void;
+    setList: (
+      fn: () => Promise<TDosyaFolder | null> | TDosyaFolder | null,
+      options?: Options<TDosyaFolder>
+    ) => void;
+    current: TDosyaFolder | null;
+    setCurrentFolder: (folder: TDosyaFolder | null) => void;
+
+    modal: {
+      isOpen: boolean;
+      toggleOpen: () => void;
+    };
+  };
+
+  uploader: {
+    isOpen: boolean;
+    toggle: () => void;
+  };
+
+  filters: {
+    search: SearchProps | null;
+    setSearch: (search: SearchProps) => void;
+    reset: () => void;
+    filteredFiles: TDosyaFile[] | null;
+    setFilteredFiles: (files: TDosyaFile[]) => void;
+  };
+
+  preview: {
+    isOpen: boolean;
+    toggle: (file?: TDosyaFile | null) => void;
+    file: TDosyaFile | null;
+    setFile: (file: TDosyaFile) => void;
+    clear: () => void;
+  };
+};
