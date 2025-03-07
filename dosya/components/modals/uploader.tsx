@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDosya } from "@/store";
 import { CheckIcon, FileIcon, UploadIcon, XIcon } from "lucide-react";
 import { Button } from "@ui/ui/button";
-import { Dialog, DialogContent } from "@ui/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@ui/ui/dialog";
 
 type FileUpload = {
   name: string;
@@ -53,6 +53,7 @@ export const FileUploader = () => {
       {/* TRIGGER */}
 
       <Dialog open={uploader.isOpen} onOpenChange={uploader.toggle}>
+        <DialogTitle></DialogTitle>
         <DialogContent>
           <div>
             <div>

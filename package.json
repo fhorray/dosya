@@ -2,6 +2,11 @@
   "name": "@fhorray/dosya",
   "version": "0.0.26",
   "private": true,
+  "scripts": {
+    "tsup:dev": "bun run --filter=@fhorray/dosya dev",
+    "tsup": "bun run --filter=@fhorray/dosya tsup",
+    "dev": "bun run --filter=demo dev"
+  },
   "workspaces": [
     "demo",
     "dosya"

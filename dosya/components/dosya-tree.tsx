@@ -77,7 +77,7 @@ export const FolderItem = ({
           }
           onClick={async () => {
             setIsOpen(!isOpen);
-            folders.setCurrent(folder.children ? folder : folders.list);
+            folders.setCurrent(folder);
             files.setList(async () => onClick?.() || []);
           }}
         >

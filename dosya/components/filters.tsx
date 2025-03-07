@@ -3,13 +3,18 @@ import { PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import { DosyaAlert } from "./custom/alert";
 import { DosyaFolder, Options } from "@/types";
+import { CreateFolder } from "./modals/create-folder";
 
 export const Filters = ({
   onDelete,
-  options,
+  onDeleteOptions,
+  onFolderCreate,
+  onFolderCreateOptions,
 }: {
   onDelete?: () => void | Promise<void | DosyaFolder | null>;
-  options?: Options<DosyaFolder> | undefined;
+  onDeleteOptions?: Options<DosyaFolder> | undefined;
+  onFolderCreate?: () => void | Promise<void | DosyaFolder | null>;
+  onFolderCreateOptions?: Options<DosyaFolder> | undefined;
 }) => {
   const { filters, folders } = useDosya();
 
@@ -64,19 +69,25 @@ export const Filters = ({
           <DosyaAlert
             title={`Are you sure you want to delete ${folders.current?.name} ?`}
             onConfirm={async () => {
-              folders.delete(() => onDelete?.(), options);
+              folders.delete(() => onDelete?.(), onDeleteOptions);
             }}
           >
             <Button variant={"destructive"}>
               <Trash2Icon />
-              Excluir
+              Delete
             </Button>
           </DosyaAlert>
         )}
 
-        <Button variant={"outline"} onClick={folders.modal.toggle}>
-          <PlusIcon /> Nova Pasta
-        </Button>
+        <CreateFolder
+          onCreate={() => {
+            folders.create(() => onFolderCreate?.(), onFolderCreateOptions);
+          }}
+        >
+          <Button variant={"outline"}>
+            <PlusIcon /> New Folder
+          </Button>
+        </CreateFolder>
       </div>
     </div>
   );

@@ -67,6 +67,8 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
     try {
       const result = await fn();
 
+      console.log(result);
+
       // set new result
       if (result) {
         set((state) => ({
