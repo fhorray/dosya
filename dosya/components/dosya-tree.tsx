@@ -78,7 +78,10 @@ export const FolderItem = ({
           onClick={async () => {
             setIsOpen(!isOpen);
             folders.setCurrent(folder.children ? folder : folders.list);
-            files.setList(async () => onClick?.() || []);
+            files.setList(async () => {
+              const result = await onClick?.();
+              return result ?? [];
+            });
           }}
         >
           <span className="mr-2 text-blue-600">

@@ -1,4 +1,3 @@
-import { useDosya } from "@/store";
 import { DosyaFile, DosyaFolder, Options } from "@/types";
 import { getContrastingColor } from "@/utils/get-color";
 import {
@@ -10,6 +9,7 @@ import {
 import { DosyaAlert } from "@ui/custom/alert";
 import { Button } from "@ui/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/ui/popover";
+import { useDosya } from "@/store";
 
 export const FolderList = ({
   folders: foldersData,
@@ -72,10 +72,14 @@ export const FolderList = ({
           <li
             key={index}
             onClick={() => {
-              setCurrent(folder);
-              files.setList(async () => onClick?.(), {
-                ...onClickOptions,
-              });
+              folders.setCurrent(folder);
+              files.setList(
+                async () => {
+                  const result = await onClick?.();
+                  return result ?? [];
+                },
+                { ...onClickOptions }
+              );
             }}
             className="cursor-pointer transition-transform group-hover:scale-[1.003] z-10"
           >

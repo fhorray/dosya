@@ -1,76 +1,95 @@
-import { DosyaProps, DosyaFolder } from "@/types";
-import { create } from "zustand";
-import { useDosyaContext } from "./context";
+import { DosyaProps, DosyaFolder, Options } from "@/types";
+import { Store } from "@tanstack/store";
+import { stateActions } from "./context";
 import { findFolder } from "@/utils/find-folder";
 import { toast } from "sonner";
 
-export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
+// Define o tipo do estado do store de folders
+type DosyaFoldersState = DosyaProps["folders"];
+
+// Estado inicial para os folders
+const initialFoldersState: DosyaFoldersState = {
   list: null,
   current: null,
+  modal: {
+    isOpen: false,
+    toggle: () => {},
+  },
+  create: () => {},
+  delete: () => {},
+  setList: () => {},
+  setCurrent: () => {},
+};
 
-  create: async (fn, options) => {
-    useDosyaContext.getState().state.setLoading(true);
+// Cria o store com o estado inicial
+export const dosyaFoldersStore = new Store(initialFoldersState);
+
+// Ações para manipular o estado dos folders
+export const foldersActions = {
+  create: async (fn: () => Promise<any>, options?: Options<DosyaFolder>) => {
+    stateActions.setLoading(true);
     try {
       const result = await fn();
 
+      // Procura a pasta atual dentro do resultado
+      const currentFolderId = dosyaFoldersStore.state.current?.id as string;
       const found = findFolder(
         result?.children as DosyaFolder<Record<any, any>>[],
-        get().current?.id as string
+        currentFolderId
       );
 
-      // set new result
+      // Atualiza o estado com o novo resultado e a pasta encontrada
       if (result) {
-        set((state) => ({
-          ...state,
+        dosyaFoldersStore.setState((prev) => ({
+          ...prev,
           list: result as DosyaFolder<Record<any, any>> | null,
           current: found,
         }));
 
-        toast.success("Folder created successfully!");
+        // toast.success("Folder created successfully!");
       }
 
       options?.onSuccess?.(result as DosyaFolder);
     } catch (error) {
       options?.onError?.(error as Error);
     } finally {
-      useDosyaContext.getState().state.setLoading(false);
+      stateActions.setLoading(false);
     }
   },
 
-  delete: async (fn, options) => {
-    useDosyaContext.getState().state.setLoading(true);
-
+  delete: async (fn: () => Promise<any>, options?: Options<DosyaFolder>) => {
+    stateActions.setLoading(true);
     try {
       const result = await fn();
 
-      // set new result
+      // Atualiza o estado com o novo resultado e reseta a pasta atual
       if (result) {
-        set((state) => ({
-          ...state,
+        dosyaFoldersStore.setState((prev) => ({
+          ...prev,
           list: result as DosyaFolder<Record<any, any>> | null,
-          current: undefined,
+          current: null,
         }));
 
-        toast.success("Folder deleted successfully!");
+        // toast.success("Folder deleted successfully!");
       }
 
       options?.onSuccess?.(result as DosyaFolder);
     } catch (error) {
       options?.onError?.(error as Error);
     } finally {
-      useDosyaContext.getState().state.setLoading(false);
+      stateActions.setLoading(false);
     }
   },
 
-  setList: async (fn, options) => {
-    useDosyaContext.getState().state.setLoading(true);
+  setList: async (fn: () => Promise<any>, options?: Options<DosyaFolder>) => {
+    stateActions.setLoading(true);
     try {
       const result = await fn();
 
-      // set new result
+      // Atualiza o estado com a nova lista, se houver resultado
       if (result) {
-        set((state) => ({
-          ...state,
+        dosyaFoldersStore.setState((prev) => ({
+          ...prev,
           list: result as DosyaFolder<Record<any, any>> | null,
         }));
       }
@@ -79,12 +98,17 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
     } catch (error) {
       options?.onError?.(error as Error);
     } finally {
-      useDosyaContext.getState().state.setLoading(false);
+      stateActions.setLoading(false);
     }
   },
 
-  setCurrent: (folder) => {
-    set(() => ({
+  setCurrent: (folder: Partial<DosyaFolder> | null) => {
+    dosyaFoldersStore.setState(() => ({
+      list: null,
+      create: () => {},
+      delete: () => {},
+      setList: () => {},
+      modal: { isOpen: false, toggle: () => {} },
       current: {
         id: folder?.id || "root",
         name: folder?.name || "root",
@@ -93,15 +117,15 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
         parentId: folder?.parentId || "root",
         ...folder,
       },
+      setCurrent: () => {},
     }));
   },
 
-  modal: {
-    isOpen: false,
-    toggle: () =>
-      set((state) => ({
-        ...state,
-        modal: { ...state.modal, isOpen: !state.modal.isOpen },
-      })),
+  // Ação para alternar o estado do modal
+  toggleModal: () => {
+    dosyaFoldersStore.setState((prev) => ({
+      ...prev,
+      modal: { ...prev.modal, isOpen: !prev.modal.isOpen },
+    }));
   },
-}));
+};

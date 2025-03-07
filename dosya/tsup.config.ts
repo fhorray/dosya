@@ -15,6 +15,8 @@ export default defineConfig({
   splitting: true,
   external: ["react", "react-dom"],
   shims: false,
+  minify: true,
+  injectStyle: true,
   esbuildOptions(options) {
     // options.outExtension = { '.js': '.mjs' }; // Força saída ESM para .mjs
     // options.loader = {

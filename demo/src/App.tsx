@@ -13,13 +13,19 @@ function App() {
   useEffect(() => {
     // fetch images
     const fetchData = async () => {
-      files.setList(async () =>
-        fetchFiles({
-          folder: "",
-          limit: 100,
-          page: 1,
-        })
-      );
+      files.setList(async () => {
+        try {
+          const result = await fetchFiles({
+            folder: "",
+            limit: 100,
+            page: 1,
+          });
+          return result || [];
+        } catch (error) {
+          console.error(error);
+          return [];
+        }
+      });
 
       folders.setList(async () => fetchFolders());
     };
@@ -34,7 +40,7 @@ function App() {
 
       <main className="w-full max-w-[80%] ml-[20%] flex flex-col">
         {/* HEADER */}
-        <Header currentView={viewMode} setView={context.config.viewMode.set} />
+        <Header currentView={viewMode} setView={() => {}} />
 
         {/* FILTERS */}
         <div className="w-full px-4">

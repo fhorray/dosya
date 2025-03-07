@@ -64,7 +64,10 @@ export const Filters = ({
           <DosyaAlert
             title={`Are you sure you want to delete ${folders.current?.name} ?`}
             onConfirm={async () => {
-              folders.delete(() => onDelete?.(), options);
+              if (!onDelete) return;
+              const result = await onDelete();
+              if (!result) return;
+              await folders.delete(() => Promise.resolve(result), options);
             }}
           >
             <Button variant={"destructive"}>

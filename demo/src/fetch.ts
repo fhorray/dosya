@@ -1,4 +1,4 @@
-import { DosyaFile, DosyaFolder } from "@fhorray/dosya/dist/types";
+import { DosyaFile, DosyaFolder } from "@fhorray/dosya/types";
 import { cache } from "react";
 
 // FETCH FILES

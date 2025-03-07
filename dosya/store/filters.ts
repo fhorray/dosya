@@ -1,9 +1,9 @@
-import { DosyaProps } from "@/types";
 import { formatBytes } from "@/utils/format-bytes";
-import { create } from "zustand";
-import { useDosyaFiles } from "./files";
+import { Store } from "@tanstack/store";
+import { dosyaFilesStore } from "./files";
+import { DosyaProps, SearchProps, DosyaFile } from "@/types";
 
-export const useDosyaFilters = create<DosyaProps["filters"]>((set, get) => ({
+const initialFiltersState: DosyaProps["filters"] = {
   search: {
     name: "",
     format: "",
@@ -11,32 +11,56 @@ export const useDosyaFilters = create<DosyaProps["filters"]>((set, get) => ({
     tag: "",
     color: "",
   },
+  filteredFiles: null,
+  setSearch: (search: SearchProps) => {},
+  reset: () => {},
+  setFilteredFiles: (files: DosyaFile[]) => {},
+};
 
-  setSearch: (search) => {
-    const files = useDosyaFiles.getState().list?.filter((file) => {
-      // filter by name
+// Cria o store para os filtros
+export const dosyaFiltersStore = new Store(initialFiltersState);
+
+// Ações para manipular os filtros
+export const filtersActions = {
+  setSearch: (search: Partial<DosyaProps["filters"]["search"]>) => {
+    // Filtra os arquivos com base nos critérios de busca
+    const files = dosyaFilesStore.state.list?.filter((file) => {
       const nameMatch = file.name
         .toLowerCase()
-        .includes(search.name?.toLowerCase() || "");
-
-      // filter by size
+        .includes(search?.name?.toLowerCase() || "");
       const sizeMatch =
-        formatBytes(file.size).value >= parseInt(search.size || "0", 10);
-
+        formatBytes(file.size).value >= parseInt(search?.size || "0", 10);
       console.log(sizeMatch);
-
       return nameMatch && sizeMatch;
     });
 
-    set(() => ({
-      search: { ...get().search, ...search },
+    // Atualiza o store com os novos critérios de busca e os arquivos filtrados
+    dosyaFiltersStore.setState((prev) => ({
+      ...prev,
+      search: { ...prev.search, ...search },
+      filteredFiles: files || null,
+    }));
+  },
+
+  setFilteredFiles: (files: DosyaProps["filters"]["filteredFiles"]) => {
+    dosyaFiltersStore.setState((prev) => ({
+      ...prev,
       filteredFiles: files,
     }));
   },
 
-  filteredFiles: null,
-
-  setFilteredFiles: (files) => set(() => ({ filteredFiles: files })),
-
-  reset: () => set(() => ({ search: null })),
-}));
+  reset: () => {
+    // Reseta os filtros para o estado inicial
+    dosyaFiltersStore.setState((prev) => ({
+      ...prev,
+      search: {
+        name: "",
+        format: "",
+        size: "",
+        tag: "",
+        color: "",
+      },
+      filteredFiles: null,
+    }));
+  },
+};

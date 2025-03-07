@@ -16,19 +16,19 @@ export const DosyaProvider = ({
 }) => {
   const { context } = useDosya();
   // useEffect to set config in context
-  useEffect(() => {
-    context.setConfig({
-      baseUrl: config?.baseUrl || "/",
-      defaultFolder: config?.defaultFolder || "/",
-      defaultView: config?.defaultView || "grid",
-    });
-    context.config.viewMode.set(config?.defaultView || "grid");
-  }, []);
+  // useEffect(() => {
+  //   context.setConfig({
+  //     baseUrl: config?.baseUrl || "/",
+  //     defaultFolder: config?.defaultFolder || "/",
+  //     defaultView: config?.defaultView || "grid",
+  //   });
+  //   context.config.viewMode.set(config?.defaultView || "grid");
+  // }, []);
 
   return (
     <>
       {children}
-      <Toaster />
+      {/* <Toaster /> */}
       <FileUploader />
       <DosyaPreview />
     </>

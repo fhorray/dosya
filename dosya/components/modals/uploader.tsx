@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-
 import { useDosya } from "@/store";
 import { CheckIcon, FileIcon, UploadIcon, XIcon } from "lucide-react";
 import { Button } from "@ui/ui/button";
-import { Dialog, DialogContent } from "@ui/ui/dialog";
 
 type FileUpload = {
   name: string;
@@ -16,7 +14,6 @@ type FileUpload = {
 
 export const FileUploader = () => {
   const { uploader, files, folders, context } = useDosya();
-
   const [filesData, setFilesData] = useState<FileUpload[]>([]);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -25,36 +22,38 @@ export const FileUploader = () => {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    // In a real implementation, you would process the dropped files here
+    // Aqui você pode processar os arquivos arrastados, se necessário
   };
 
   const data = filesData.map((i) => i.file);
 
-  // on submit
   const handleSubmit = () => {
-    files.upload(data, () => {
-      files.upload(data, () => {
-        const folder = folders.current?.key || "";
+    files.upload(data, async () => {
+      await files.upload(data, async () => {
+        const folderKey = folders.current?.key || "";
 
-        // set error message if folder path is undefined
-        if (!folder) {
+        if (!folderKey) {
           context.error.setMessage("Folder not found");
           return;
         }
-
-        // set new files array merging the old files with the new ones
-        //files.setList();
+        // Aqui você pode atualizar a lista de arquivos se necessário
       });
     });
   };
 
   return (
     <div className="w-full h-full relative z-[9999]">
-      {/* TRIGGER */}
-
-      <Dialog open={uploader.isOpen} onOpenChange={uploader.toggle}>
-        <DialogContent>
-          <div>
+      {/* Modal renderizado com div */}
+      {uploader.isOpen && (
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-50"
+          onClick={uploader.toggle}
+        >
+          <div
+            className="bg-white rounded-lg p-6 w-full max-w-md mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* CONTEÚDO DO MODAL */}
             <div>
               {/* INPUT FILE */}
               <div
@@ -68,24 +67,20 @@ export const FileUploader = () => {
                   multiple
                   onChange={(e) => {
                     const files = e.target.files;
-
                     if (files) {
                       setFilesData(
-                        Array.from(files).map((file) => {
-                          return {
-                            name: file.name,
-                            progress: 0,
-                            timeLeft: 0,
-                            completed: false,
-                            error: false,
-                            file,
-                          };
-                        })
+                        Array.from(files).map((file) => ({
+                          name: file.name,
+                          progress: 0,
+                          timeLeft: 0,
+                          completed: false,
+                          error: false,
+                          file,
+                        }))
                       );
                     }
                   }}
                 />
-
                 <UploadIcon className="h-8 w-8 text-gray-500" />
                 <p className="text-gray-400">Drag and drop or browse files</p>
               </div>
@@ -125,9 +120,9 @@ export const FileUploader = () => {
                             <Button
                               className="p-1"
                               onClick={() => {
-                                setFilesData((prev) => {
-                                  return prev.filter((_, i) => i !== index);
-                                });
+                                setFilesData((prev) =>
+                                  prev.filter((_, i) => i !== index)
+                                );
                               }}
                             >
                               <XIcon className="h-5 w-5 text-gray-400" />
@@ -141,7 +136,7 @@ export const FileUploader = () => {
               </div>
             </div>
 
-            {/* FOOTER WITH BUTTONS */}
+            {/* FOOTER COM BOTÕES */}
             <div className="flex justify-end gap-4 pt-8">
               <Button
                 onClick={() => {
@@ -163,8 +158,8 @@ export const FileUploader = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       <div className="w-full h-full relative z-20" />
     </div>

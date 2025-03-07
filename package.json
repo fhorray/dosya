@@ -5,5 +5,13 @@
   "workspaces": [
     "demo",
     "dosya"
-  ]
+  ],
+  "scripts": {
+    "tsup": "bun run --filter=@fhorray/dosya tsup",
+    "dev": "bun run --filter=demo dev"
+  },
+  "dependencies": {
+    "@tanstack/store": "^0.7.0",
+    "treeshakable": "^0.0.1"
+  }
 }
