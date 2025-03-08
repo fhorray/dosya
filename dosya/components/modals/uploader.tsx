@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { useDosya } from "@/store";
-import { CheckIcon, FileIcon, UploadIcon, XIcon } from "lucide-react";
-import { Button } from "@ui/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@ui/ui/dialog";
+import { useDosya } from '@/store';
+import { CheckIcon, FileIcon, UploadIcon, XIcon } from 'lucide-react';
+import { Button } from '@ui/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@ui/ui/dialog';
 
 type FileUpload = {
   name: string;
@@ -34,11 +34,11 @@ export const FileUploader = () => {
   const handleSubmit = () => {
     files.upload(data, () => {
       files.upload(data, () => {
-        const folder = folders.current?.key || "";
+        const folder = folders.current?.key || '';
 
         // set error message if folder path is undefined
         if (!folder) {
-          context.error.setMessage("Folder not found");
+          context.error.setMessage('Folder not found');
           return;
         }
 
@@ -81,7 +81,7 @@ export const FileUploader = () => {
                             error: false,
                             file,
                           };
-                        })
+                        }),
                       );
                     }
                   }}
@@ -149,7 +149,7 @@ export const FileUploader = () => {
                   setFilesData([]);
                   uploader.toggle();
                 }}
-                variant={"ghost"}
+                variant={'ghost'}
               >
                 Cancel
               </Button>

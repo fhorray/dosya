@@ -1,4 +1,4 @@
-import { DosyaFile, DosyaFolder } from ".";
+import { DosyaFile, DosyaFolder } from '.';
 
 // STORE TYPES
 export type Options<T = any> = {
@@ -21,17 +21,51 @@ export type AsyncOrSyncFunction<T extends unknown[] = [], R = void> = (
 
 type ConfigProps = {
   viewMode: {
-    default: "grid" | "list";
-    set: (value: "grid" | "list") => void;
+    default: 'grid' | 'list';
+    set: (value: 'grid' | 'list') => void;
   };
   defaultFolder: string;
   baseUrl: string;
+
+  fetchers: {
+    fetchFiles: AsyncOrSyncFunction<
+      [
+        values: {
+          folder: string | undefined;
+          limit: number;
+          page: string | number;
+        },
+      ],
+      Promise<DosyaFile[] | null> | DosyaFile[] | null
+    >;
+    fetchFolders: AsyncOrSyncFunction<
+      [key?: string],
+      Promise<DosyaFolder | null> | DosyaFolder | null
+    >;
+    onFolderCreate: AsyncOrSyncFunction<
+      [folder: DosyaFolder],
+      Promise<DosyaFolder | null | void> | DosyaFolder | null | void
+    >;
+    onFolderDelete: AsyncOrSyncFunction<
+      [folder: string | DosyaFolder],
+      Promise<DosyaFolder | null | void> | DosyaFolder | null | void
+    >;
+    onFileDelete: AsyncOrSyncFunction<
+      [],
+      Promise<DosyaFile | null | void> | DosyaFile | null | void
+    >;
+    onCreateFile: AsyncOrSyncFunction<
+      [],
+      Promise<DosyaFile | null | void> | DosyaFile | null | void
+    >;
+  };
 };
 
 export type DosyaConfig = {
-  defaultView: ConfigProps["viewMode"]["default"];
+  defaultView: ConfigProps['viewMode']['default'];
   defaultFolder: string;
   baseUrl: string;
+  fetchers: ConfigProps['fetchers'];
 };
 
 export type DosyaContext = {
@@ -54,26 +88,20 @@ export type DosyaProps = {
   files: {
     list: DosyaFile[] | null;
     setList: (
-      fn: () => Promise<DosyaFile[] | null> | DosyaFile[] | null,
-      options?: Options<DosyaFile[]>
+      data: { page: string | number; limit: number; folder: string },
+      options?: Options<DosyaFile[]>,
     ) => void;
     upload: (files: File[], callback?: AsyncOrSyncFunction<[], void>) => void;
   };
 
   folders: {
     list: DosyaFolder | null;
-    create: (
-      fn: () => Promise<DosyaFolder | null | void> | void,
-      options?: Options<DosyaFolder>
-    ) => void;
+    create: (data: DosyaFolder, options?: Options<DosyaFolder>) => void;
     delete: (
-      fn: () => Promise<DosyaFolder | null | void> | void,
-      options?: Options<DosyaFolder>
+      data: string | DosyaFolder,
+      options?: Options<DosyaFolder>,
     ) => void;
-    setList: (
-      fn: () => Promise<DosyaFolder | null> | DosyaFolder | null,
-      options?: Options<DosyaFolder>
-    ) => void;
+    setList: (key: string, options?: Options<DosyaFolder>) => void;
     current: DosyaFolder | null;
     setCurrent: (folder: DosyaFolder | null) => void;
 

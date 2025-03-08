@@ -1,21 +1,29 @@
-import { DosyaProps, DosyaFolder } from "@/types";
-import { create } from "zustand";
-import { useDosyaContext } from "./context";
-import { findFolder } from "@/utils/find-folder";
-import { toast } from "sonner";
+import { DosyaProps, DosyaFolder } from '@/types';
+import { create } from 'zustand';
+import { useDosyaContext } from './context';
+import { findFolder } from '@/utils/find-folder';
+import { toast } from 'sonner';
 
-export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
+export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
   list: null,
-  current: null,
+  current: {
+    id: 'root',
+    name: 'root',
+    key: 'root',
+    children: [],
+    parentId: 'root',
+  },
 
-  create: async (fn, options) => {
+  create: async (data, options) => {
     useDosyaContext.getState().state.setLoading(true);
     try {
-      const result = await fn();
+      const result = await useDosyaContext
+        .getState()
+        .config.fetchers.onFolderCreate(data);
 
       const found = findFolder(
         result?.children as DosyaFolder<Record<any, any>>[],
-        get().current?.id as string
+        get().current?.id as string,
       );
 
       // set new result
@@ -26,7 +34,7 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
           current: found,
         }));
 
-        toast.success("Folder created successfully!");
+        toast.success('Folder created successfully!');
       }
 
       options?.onSuccess?.(result as DosyaFolder);
@@ -37,11 +45,13 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
     }
   },
 
-  delete: async (fn, options) => {
+  delete: async (data, options) => {
     useDosyaContext.getState().state.setLoading(true);
 
     try {
-      const result = await fn();
+      const result = await useDosyaContext
+        .getState()
+        .config.fetchers.onFolderDelete(data);
 
       // set new result
       if (result) {
@@ -51,7 +61,7 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
           current: undefined,
         }));
 
-        toast.success("Folder deleted successfully!");
+        toast.success('Folder deleted successfully!');
       }
 
       options?.onSuccess?.(result as DosyaFolder);
@@ -62,18 +72,18 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
     }
   },
 
-  setList: async (fn, options) => {
+  setList: async (key, options) => {
     useDosyaContext.getState().state.setLoading(true);
     try {
-      const result = await fn();
-
-      console.log(result);
+      const result = await useDosyaContext
+        .getState()
+        .config.fetchers.fetchFolders(key);
 
       // set new result
       if (result) {
         set((state) => ({
           ...state,
-          list: result as DosyaFolder<Record<any, any>> | null,
+          list: result,
         }));
       }
 
@@ -88,11 +98,11 @@ export const useDosyaFolders = create<DosyaProps["folders"]>((set, get) => ({
   setCurrent: (folder) => {
     set(() => ({
       current: {
-        id: folder?.id || "root",
-        name: folder?.name || "root",
-        key: folder?.key || "root",
+        id: folder?.id || 'root',
+        name: folder?.name || 'root',
+        key: folder?.key || 'root',
         children: folder?.children || [],
-        parentId: folder?.parentId || "root",
+        parentId: folder?.parentId || 'root',
         ...folder,
       },
     }));

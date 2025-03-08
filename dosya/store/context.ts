@@ -1,16 +1,16 @@
-import { DosyaProps } from "@/types";
-import { create } from "zustand";
+import { DosyaProps } from '@/types';
+import { create } from 'zustand';
 
-export const useDosyaContext = create<DosyaProps["context"]>((set) => ({
+export const useDosyaContext = create<DosyaProps['context']>((set) => ({
   error: {
-    message: "",
+    message: '',
     setMessage: (message) =>
       set((state) => ({
         error: { ...state.error, message },
       })),
     clear: () =>
       set((state) => ({
-        error: { ...state.error, message: "" },
+        error: { ...state.error, message: '' },
       })),
   },
   state: {
@@ -21,11 +21,11 @@ export const useDosyaContext = create<DosyaProps["context"]>((set) => ({
       })),
   },
   config: {
-    defaultFolder: "/",
-    baseUrl: "/",
+    defaultFolder: '/',
+    baseUrl: '/',
     viewMode: {
-      default: "grid",
-      set: (value: "grid" | "list") =>
+      default: 'grid',
+      set: (value: 'grid' | 'list') =>
         set((state) => ({
           config: {
             ...state.config,
@@ -33,16 +33,21 @@ export const useDosyaContext = create<DosyaProps["context"]>((set) => ({
           },
         })),
     },
+    fetchers: {
+      fetchFiles: async () => null,
+      fetchFolders: async () => null,
+      onFolderCreate: async () => null,
+      onFolderDelete: async () => null,
+      onFileDelete: async () => null,
+      onCreateFile: async () => null,
+    },
   },
   setConfig: (config) =>
     set((state) => ({
       config: {
         ...state.config,
         ...config,
-        viewMode: {
-          ...state.config.viewMode,
-          ...config,
-        },
+        fetchers: { ...state.config.fetchers, ...config.fetchers },
       },
     })),
 }));

@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils";
-import { useDosya } from "@/store";
-import { DosyaFile, DosyaFolder, Options } from "@/types";
+import { cn } from '@/lib/utils';
+import { useDosya } from '@/store';
+import { DosyaFile, DosyaFolder, Options } from '@/types';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
   FolderIcon,
   FolderOpenIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface IDosyaTreeProps {
   itemRenderer?: React.ComponentType<{ folder: DosyaFolder }>;
@@ -19,17 +19,19 @@ export const DosyaTree = ({ itemRenderer }: IDosyaTreeProps) => {
   const ItemRenderer = itemRenderer;
 
   return (
-    <ul className="text-sm">
-      {folders.list?.children?.map((folder: DosyaFolder) => (
-        <React.Fragment key={folder.id}>
-          {ItemRenderer ? (
-            <ItemRenderer folder={folder} />
-          ) : (
-            <FolderItem folder={folder} />
-          )}
-        </React.Fragment>
-      ))}
-    </ul>
+    <div className="w-full">
+      <ul className="text-sm">
+        {folders.list?.children?.map((folder: DosyaFolder) => (
+          <React.Fragment key={folder.id}>
+            {ItemRenderer ? (
+              <ItemRenderer folder={folder} />
+            ) : (
+              <FolderItem folder={folder} />
+            )}
+          </React.Fragment>
+        ))}
+      </ul>
+    </div>
   );
 };
 
@@ -53,16 +55,16 @@ export const FolderItem = ({
     <li className="py-0">
       <div
         className={cn(
-          "flex items-center group my-1 rounded-md",
-          isCurrentPath && "bg-gray-200 hover:bg-gray-100"
+          'flex items-center group my-1 rounded-md',
+          isCurrentPath && 'bg-gray-200 hover:bg-gray-100',
         )}
       >
         <button
           className={`mr-1 p-0.5 rounded-sm transition-colors cursor-pointer ${
-            hasChildren ? "visible" : "invisible"
+            hasChildren ? 'visible' : 'invisible'
           }`}
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Collapse folder" : "Expand folder"}
+          aria-label={isOpen ? 'Collapse folder' : 'Expand folder'}
         >
           {isOpen ? (
             <ChevronDownIcon size={14} className="text-gray-500" />
@@ -73,12 +75,16 @@ export const FolderItem = ({
 
         <button
           className={
-            "flex cursor-pointer items-center w-full py-1 px-0 rounded-md transition-colors text-left"
+            'flex cursor-pointer items-center w-full py-1 px-0 rounded-md transition-colors text-left'
           }
           onClick={async () => {
             setIsOpen(!isOpen);
             folders.setCurrent(folder);
-            files.setList(async () => onClick?.() || []);
+            files.setList({
+              folder: folder.key,
+              limit: 100,
+              page: 1,
+            });
           }}
         >
           <span className="mr-2 text-blue-600">

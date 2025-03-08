@@ -1,5 +1,5 @@
-import { FileIcon } from "./file-icon";
-import { DosyaProps, DosyaFile } from "@/types";
+import { FileIcon } from './file-icon';
+import { DosyaProps, DosyaFile } from '@/types';
 
 export const FileList = ({
   files,
@@ -7,16 +7,16 @@ export const FileList = ({
   viewMode,
 }: {
   files: DosyaFile[];
-  preview: DosyaProps["preview"];
+  preview: DosyaProps['preview'];
   viewMode: string;
 }) => {
-  return viewMode === "grid" ? (
+  return viewMode === 'grid' ? (
     <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {files.map((file, index) => (
         <li
           key={index}
           onClick={() => {
-            preview.toggle();
+            preview.toggle(file);
             preview.setFile(file);
           }}
           className="cursor-pointer transition-transform hover:scale-[1.01]"

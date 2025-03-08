@@ -1,30 +1,26 @@
-import { useDosya } from "@/store";
-import { DosyaFolder, Options } from "@/types";
-import { createId } from "@/utils/create-id";
-import React, { useState } from "react";
-import { Button } from "../ui/button";
+import { useDosya } from '@/store';
+import { DosyaFolder, Options } from '@/types';
+import { createId } from '@/utils/create-id';
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { cn } from "@/lib/utils";
-import { Loader2Icon } from "lucide-react";
+} from '../ui/dialog';
+import { cn } from '@/lib/utils';
+import { Loader2Icon } from 'lucide-react';
 
 type CreateFolderProps = {
   children: React.ReactNode;
-  onCreate: () => void | Promise<void | DosyaFolder | null>;
-  onCreateOptions?: Options<DosyaFolder> | undefined;
+  // onCreate: () => void | Promise<void | DosyaFolder | null>;
+  // onCreateOptions?: Options<DosyaFolder> | undefined;
 };
 
-export const CreateFolder = ({
-  children,
-  onCreate,
-  onCreateOptions,
-}: CreateFolderProps) => {
-  const [folderName, setFolderName] = useState("");
-  const [color, setColor] = useState("#6366F1");
+export const CreateFolder = ({ children }: CreateFolderProps) => {
+  const [folderName, setFolderName] = useState('');
+  const [color, setColor] = useState('#6366F1');
 
   const { folders, context } = useDosya();
 
@@ -49,8 +45,11 @@ export const CreateFolder = ({
     };
 
     // execute function to create folder
-    folders.create(async () => onCreate()), onCreateOptions;
-    onCreate();
+    folders.create(newFolder, {
+      onSuccess: () => {
+        folders.modal.toggle();
+      },
+    });
   };
 
   return (
@@ -73,8 +72,8 @@ export const CreateFolder = ({
           <form
             onSubmit={onSubmit}
             className={cn(
-              "",
-              context.state.loading && "opacity-35 pointer-events-none"
+              '',
+              context.state.loading && 'opacity-35 pointer-events-none',
             )}
           >
             <div className="mb-4">
@@ -120,7 +119,7 @@ export const CreateFolder = ({
               <Button
                 type="button"
                 onClick={folders.modal.toggle}
-                variant={"ghost"}
+                variant={'ghost'}
               >
                 Cancel
               </Button>

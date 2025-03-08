@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { useDosya } from "@/store";
+import { Button } from '@/components/ui/button';
+import { useDosya } from '@/store';
 
-import { FileIcon, FolderIcon, Loader2Icon } from "lucide-react";
-import { FileList } from "./file-list";
-import { FolderList } from "./folder-list";
-import { DosyaFile, DosyaFolder, Options } from "@/types";
+import { FileIcon, FolderIcon, Loader2Icon } from 'lucide-react';
+import { FileList } from './file-list';
+import { FolderList } from './folder-list';
+import { DosyaFile, DosyaFolder, Options } from '@/types';
 
 export const DosyaGrid = ({
   onClick,
@@ -20,12 +20,13 @@ export const DosyaGrid = ({
   const { files, folders, preview, context, filters } = useDosya();
 
   const viewMode = context.config.viewMode.default;
+
   const filesData = (filters.filteredFiles || files.list)?.filter(
-    (f) => f.name !== ".config.json"
+    (f) => f.name !== '.config.json',
   );
 
   return (
-    <section className="w-full space-y-6">
+    <section className="w-auto space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">
           Folders ({folders.list?.children?.length || 0})
@@ -37,7 +38,7 @@ export const DosyaGrid = ({
           onClick={
             onClick ??
             (() => {
-              window.alert("Folder clicked");
+              window.alert('Folder clicked');
               return null;
             })
           }
@@ -45,7 +46,7 @@ export const DosyaGrid = ({
           onDelete={onDelete}
           onDeleteOptions={onDeleteOptions}
           folders={
-            folders.current.name === "root"
+            folders.current.name === 'root'
               ? (folders.list?.children as DosyaFolder[])
               : folders.current?.children || []
           }

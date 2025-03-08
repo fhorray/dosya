@@ -1,5 +1,5 @@
-import { DosyaFile, DosyaFolder } from "@fhorray/dosya/dist/types";
-import { cache } from "react";
+import { DosyaFile, DosyaFolder } from '@fhorray/dosya/types';
+import { cache } from 'react';
 
 // FETCH FILES
 export const fetchFiles = cache(
@@ -10,18 +10,18 @@ export const fetchFiles = cache(
   }: {
     page: string | number;
     limit: number;
-    folder: string;
+    folder: string | undefined;
   }): Promise<DosyaFile[] | null> => {
     try {
-      const res = await fetch("http://127.0.0.1:8787/files/list", {
-        credentials: "include",
-        method: "POST",
+      const res = await fetch('http://127.0.0.1:8787/files/list', {
+        credentials: 'include',
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           folder,
-          limit: limit.toString(),
+          limit: String(limit),
           page,
         }),
       });
@@ -31,17 +31,17 @@ export const fetchFiles = cache(
       console.error(error);
       return null;
     }
-  }
+  },
 );
 
 // FETCH FOLDERS
 export const fetchFolders = cache(async (): Promise<DosyaFolder | null> => {
   try {
-    const res = await fetch("http://127.0.0.1:8787/files/list/folders", {
-      credentials: "include",
+    const res = await fetch('http://127.0.0.1:8787/files/list/folders', {
+      credentials: 'include',
     });
     const data = await res.json();
-    return data.data as DosyaFolder;
+    return data.data;
   } catch (error) {
     console.error(error);
     return null;
@@ -52,11 +52,11 @@ export const fetchFolders = cache(async (): Promise<DosyaFolder | null> => {
 export const createFolder = cache(
   async (folder: DosyaFolder): Promise<DosyaFolder | null> => {
     try {
-      const res = await fetch("http://127.0.0.1:8787/files/create/folder", {
-        credentials: "include",
-        method: "POST",
+      const res = await fetch('http://127.0.0.1:8787/files/create/folder', {
+        credentials: 'include',
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...folder,
@@ -71,18 +71,18 @@ export const createFolder = cache(
       console.error(error);
       return null;
     }
-  }
+  },
 );
 
 // DELETE FOLDER
 export const deleteFolder = cache(
-  async (folder: string): Promise<DosyaFolder | null> => {
+  async (folder: string | DosyaFolder): Promise<DosyaFolder | null> => {
     try {
-      const res = await fetch("http://127.0.0.1:8787/files/delete/folder", {
-        credentials: "include",
-        method: "DELETE",
+      const res = await fetch('http://127.0.0.1:8787/files/delete/folder', {
+        credentials: 'include',
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ folder }),
       });
@@ -95,8 +95,8 @@ export const deleteFolder = cache(
 
       return data?.data ?? null;
     } catch (error) {
-      console.error("Erro em deleteFolder:", error);
+      console.error('Erro em deleteFolder:', error);
       return null;
     }
-  }
+  },
 );

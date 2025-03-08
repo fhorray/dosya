@@ -1,15 +1,17 @@
-import { DosyaProps, DosyaFile } from "@/types";
-import { create } from "zustand";
-import { useDosyaContext } from "./context";
+import { DosyaProps, DosyaFile } from '@/types';
+import { create } from 'zustand';
+import { useDosyaContext } from './context';
 
-export const useDosyaFiles = create<DosyaProps["files"]>((set) => ({
+export const useDosyaFiles = create<DosyaProps['files']>((set) => ({
   list: null,
 
-  setList: async (fn, options) => {
+  setList: async (values, options) => {
     useDosyaContext.getState().state.setLoading(true);
 
     try {
-      const result = fn instanceof Function ? await fn() : fn;
+      const result = await useDosyaContext
+        .getState()
+        .config.fetchers.fetchFiles(values);
 
       set(() => ({ list: result }));
 
@@ -27,10 +29,10 @@ export const useDosyaFiles = create<DosyaProps["files"]>((set) => ({
 
   upload: async (files, uploadFunction) => {
     // Limpa erro no contexto
-    useDosyaContext.getState().error.setMessage("");
+    useDosyaContext.getState().error.setMessage('');
     try {
       if (!files) {
-        useDosyaContext.getState().error.setMessage("File or folder not found");
+        useDosyaContext.getState().error.setMessage('File or folder not found');
         return;
       }
       await uploadFunction?.();

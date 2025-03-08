@@ -1,9 +1,9 @@
-import { useDosya } from "@/store";
-import { PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
-import { Button } from "./ui/button";
-import { DosyaAlert } from "./custom/alert";
-import { DosyaFolder, Options } from "@/types";
-import { CreateFolder } from "./modals/create-folder";
+import { useDosya } from '@/store';
+import { PlusIcon, SearchIcon, Trash2Icon } from 'lucide-react';
+import { Button } from './ui/button';
+import { DosyaAlert } from './custom/alert';
+import { DosyaFolder, Options } from '@/types';
+import { CreateFolder } from './modals/create-folder';
 
 export const Filters = ({
   onDelete,
@@ -28,7 +28,7 @@ export const Filters = ({
             placeholder="Search files..."
             className="w-full p-2 border border-gray-200 rounded-md"
             onChange={(e) => {
-              if (e.target.value === "") {
+              if (e.target.value === '') {
                 filters.reset();
               }
 
@@ -48,7 +48,7 @@ export const Filters = ({
             placeholder="5 (MB)"
             className="w-full p-2 border border-gray-200 rounded-md"
             onChange={(e) => {
-              if (e.target.value === "") {
+              if (e.target.value === '') {
                 filters.reset();
               }
 
@@ -69,22 +69,18 @@ export const Filters = ({
           <DosyaAlert
             title={`Are you sure you want to delete ${folders.current?.name} ?`}
             onConfirm={async () => {
-              folders.delete(() => onDelete?.(), onDeleteOptions);
+              folders.delete(folders.current?.key as string, onDeleteOptions);
             }}
           >
-            <Button variant={"destructive"}>
+            <Button variant={'destructive'}>
               <Trash2Icon />
               Delete
             </Button>
           </DosyaAlert>
         )}
 
-        <CreateFolder
-          onCreate={() => {
-            folders.create(() => onFolderCreate?.(), onFolderCreateOptions);
-          }}
-        >
-          <Button variant={"outline"}>
+        <CreateFolder>
+          <Button variant={'outline'}>
             <PlusIcon /> New Folder
           </Button>
         </CreateFolder>

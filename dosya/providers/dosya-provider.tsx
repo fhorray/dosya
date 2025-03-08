@@ -1,10 +1,10 @@
-import { DosyaPreview } from "@/components/dosya-preview";
-import { CreateFolder } from "@/components/modals/create-folder";
-import { FileUploader } from "@/components/modals/uploader";
-import { Toaster } from "@/components/ui/sonner";
-import { useDosya } from "@/store";
-import { DosyaConfig, DosyaFolder } from "@/types";
-import { useEffect } from "react";
+// DosyaProvider.tsx
+import { useRef } from 'react';
+import { DosyaConfig } from '@/types';
+import { DosyaPreview } from '@/components/dosya-preview';
+import { FileUploader } from '@/components/modals/uploader';
+import { Toaster } from '@/components/ui/sonner';
+import { useDosyaContext } from '@/store/context';
 
 export const DosyaProvider = ({
   children,
@@ -12,25 +12,35 @@ export const DosyaProvider = ({
 }: {
   children: React.ReactNode;
   config?: DosyaConfig;
-  onFolderCreate?: () => void | Promise<void | DosyaFolder | null>;
 }) => {
-  const { context } = useDosya();
-  // useEffect to set config in context
-  useEffect(() => {
-    context.setConfig({
-      baseUrl: config?.baseUrl || "/",
-      defaultFolder: config?.defaultFolder || "/",
-      defaultView: config?.defaultView || "grid",
+  const initialized = useRef(false);
+  const setConfig = useDosyaContext((state) => state.setConfig);
+  const setViewMode = useDosyaContext((state) => state.config.viewMode.set);
+
+  if (!initialized.current && config) {
+    setConfig({
+      baseUrl: config.baseUrl || '/',
+      defaultFolder: config.defaultFolder || '/',
+      defaultView: config.defaultView || 'grid',
+      fetchers: {
+        fetchFiles: config.fetchers?.fetchFiles || (async () => null),
+        fetchFolders: config.fetchers?.fetchFolders || (async () => null),
+        onFileDelete: config.fetchers?.onFileDelete || (async () => null),
+        onFolderCreate: config.fetchers?.onFolderCreate || (async () => null),
+        onFolderDelete: config.fetchers?.onFolderDelete || (async () => null),
+        onCreateFile: config.fetchers?.onCreateFile || (async () => null),
+      },
     });
-    context.config.viewMode.set(config?.defaultView || "grid");
-  }, []);
+    setViewMode(config.defaultView || 'grid');
+    initialized.current = true;
+  }
 
   return (
-    <>
+    <div className="w-full">
       {children}
       <Toaster />
-      <FileUploader />
       <DosyaPreview />
-    </>
+      <FileUploader />
+    </div>
   );
 };
