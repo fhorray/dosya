@@ -13,9 +13,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@ui/*": ["./components/*"],
-      "@type/*": ["./types/*"],
-      "@utils/*": ["./utils/*"]
     }
   }
 }

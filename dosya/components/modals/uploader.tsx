@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import { useDosya } from '@/store';
 import { CheckIcon, FileIcon, UploadIcon, XIcon } from 'lucide-react';
-import { Button } from '@ui/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@ui/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 type FileUpload = {
   name: string;

@@ -21,13 +21,15 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
         .getState()
         .config.fetchers.onFolderCreate(data);
 
-      const found = findFolder(
-        result?.children as DosyaFolder<Record<any, any>>[],
-        get().current?.id as string,
-      );
-
       // set new result
       if (result) {
+        const found = findFolder(
+          result?.children as DosyaFolder<Record<any, any>>[],
+          data.key as string,
+        );
+
+        console.log({ found });
+
         set((state) => ({
           ...state,
           list: result as DosyaFolder<Record<any, any>> | null,

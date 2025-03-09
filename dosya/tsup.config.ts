@@ -17,7 +17,13 @@ export default defineConfig({
   shims: false,
   minify: true,
   injectStyle: true,
-  watch: ['components/**/*.{ts,tsx}'],
+  watch: [
+    'components/**/*.{ts,tsx}',
+    'store/**/*.{ts,tsx}',
+    'types/**/*.{ts,tsx}',
+    'utils/**/*.{ts,tsx}',
+    'providers/**/*.{ts,tsx}',
+  ],
   esbuildOptions(options) {
     // options.outExtension = { '.js': '.mjs' }; // Força saída ESM para .mjs
     // options.loader = {

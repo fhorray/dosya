@@ -1,17 +1,17 @@
-import { DosyaFolder } from "@/types";
+import { DosyaFolder } from '@/types';
 
 export function findFolder<M = Record<any, any>>(
   folders: DosyaFolder<M>[],
-  id: string
+  key: string,
 ): DosyaFolder<M> | null {
   for (const folder of folders) {
-    if (folder.id === id) {
+    if (folder.key === key) {
       return folder; // Encontrou a pasta
     }
 
     // Se houver subpastas, pesquisa recursivamente
     if (folder.children) {
-      const found = findFolder(folder.children, id);
+      const found = findFolder(folder.children, key);
       if (found) return found;
     }
   }

@@ -7,9 +7,13 @@ import {
   RefreshCwIcon,
   Trash2Icon,
 } from 'lucide-react';
-import { DosyaAlert } from '@ui/custom/alert';
-import { Button } from '@ui/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/ui/popover';
+import { DosyaAlert } from '@/components/custom/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 export const FolderList = ({
   folders: foldersData,

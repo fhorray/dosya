@@ -1,22 +1,22 @@
-import { DosyaFolder } from "@/types";
-import { createId } from "./create-id";
+import { DosyaFolder } from '@/types';
+import { createId } from './create-id';
 
 export const buildTree = (
   folders: DosyaFolder[],
   metadataMap: Record<string, unknown>,
-  omit?: string[]
+  omit?: string[],
 ): DosyaFolder => {
   const root: DosyaFolder = {
-    id: "root",
-    name: "root",
-    key: "root",
+    id: 'root',
+    name: 'root',
+    key: 'root',
     files: 0,
     children: [],
     metadata: {},
   };
 
   folders.forEach((path) => {
-    const parts = path.key.split("/").filter(Boolean);
+    const parts = path.key.split('/').filter(Boolean);
     parts.pop(); // Remove o último item (assumindo que é um arquivo).
 
     if (omit && omit.includes(parts[0])) {
@@ -33,7 +33,7 @@ export const buildTree = (
       let existingChild = current.children.find((child) => child.name === part);
 
       if (!existingChild) {
-        const newKey = current.key === "root" ? part : `${current.key}/${part}`;
+        const newKey = current.key === 'root' ? part : `${current.key}/${part}`;
 
         existingChild = {
           id: createId(),

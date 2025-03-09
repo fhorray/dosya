@@ -1,10 +1,11 @@
 // DosyaProvider.tsx
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { DosyaConfig } from '@/types';
 import { DosyaPreview } from '@/components/dosya-preview';
 import { FileUploader } from '@/components/modals/uploader';
 import { Toaster } from '@/components/ui/sonner';
 import { useDosyaContext } from '@/store/context';
+import { useDosya } from '@/store';
 
 export const DosyaProvider = ({
   children,
@@ -13,6 +14,7 @@ export const DosyaProvider = ({
   children: React.ReactNode;
   config?: DosyaConfig;
 }) => {
+  const { files, folders } = useDosya();
   const initialized = useRef(false);
   const setConfig = useDosyaContext((state) => state.setConfig);
   const setViewMode = useDosyaContext((state) => state.config.viewMode.set);
@@ -34,6 +36,22 @@ export const DosyaProvider = ({
     setViewMode(config.defaultView || 'grid');
     initialized.current = true;
   }
+
+  // useeffect to set images & folders
+  useEffect(() => {
+    // fetch images
+    const fetchData = async () => {
+      files.setList({
+        folder: '',
+        limit: 100,
+        page: 1,
+      });
+
+      folders.setList('root');
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="w-full">

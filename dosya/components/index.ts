@@ -14,18 +14,18 @@
 // export { FolderList } from "@/components/grid/folder-list";
 // export { DosyaSidebar } from "@/components/sidebar";
 
-export * from "@/components/modals/create-folder";
-export * from "@/components/modals/uploader";
-export * from "@/components/breadcrumbs";
-export * from "@/components/dosya-preview";
-export * from "@/components/dosya-tree";
-export * from "@/components/filters";
-export * from "@/components";
+export * from './modals/create-folder';
+export * from './modals/uploader';
+export * from './breadcrumbs';
+export * from './dosya-preview';
+export * from './dosya-tree';
+export * from './filters';
+export * from './';
 
-export * from "@/components/custom/alert";
-export * from "@/components/grid";
-export * from "@/components/grid/header";
-export * from "@/components/grid/file-icon";
-export * from "@/components/grid/file-list";
-export * from "@/components/grid/folder-list";
-export * from "@/components/sidebar";
+export * from './custom/alert';
+export * from './grid';
+export * from './grid/header';
+export * from './grid/file-icon';
+export * from './grid/file-list';
+export * from './grid/folder-list';
+export * from './sidebar';

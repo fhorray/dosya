@@ -1,7 +1,7 @@
-import { useDosya } from "@/store";
-import { UploadIcon } from "lucide-react";
-import { DosyaTree } from "@ui/dosya-tree";
-import { Button } from "@ui/ui/button";
+import { useDosya } from '../../store';
+import { UploadIcon } from 'lucide-react';
+import { DosyaTree } from '@/components/dosya-tree';
+import { Button } from '@/components/ui/button';
 
 export const DosyaSidebar = () => {
   const { context, uploader } = useDosya();

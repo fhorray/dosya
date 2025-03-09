@@ -1,6 +1,6 @@
 import { GridIcon, ListIcon } from 'lucide-react';
-import { Breadbrumbs } from '@ui/breadcrumbs';
-import { Button } from '@ui/ui/button';
+import { Breadbrumbs } from '@/components/breadcrumbs';
+import { Button } from '@/components/ui/button';
 import { DosyaConfig } from '@/types';
 
 // Component for view mode toggle

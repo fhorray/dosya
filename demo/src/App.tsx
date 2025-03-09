@@ -1,39 +1,33 @@
 import { useEffect } from 'react';
-import { fetchFiles, fetchFolders } from './fetch';
 
-import { DosyaGrid, Filters, Header } from '@fhorray/dosya/ui';
 import { useDosya } from '@fhorray/dosya';
-import { DosyaTree } from '@fhorray/dosya/ui';
-import { UploadIcon } from 'lucide-react';
+import { DosyaGrid, DosyaSidebar, Filters, Header } from '@fhorray/dosya/ui';
 
 function App() {
-  const { folders, files, context, filters, uploader } = useDosya();
+  const { folders, files, context, filters } = useDosya();
 
   const viewMode = context.config.viewMode.default;
 
-  // useeffect to set images
-  useEffect(() => {
-    // fetch images
-    const fetchData = async () => {
-      files.setList({
-        folder: '',
-        limit: 100,
-        page: 1,
-      });
-
-      folders.setList('root');
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <main className="w-full h-full flex">
+    <main className="flex gap-4 w-full">
       {/* SIDEBAR */}
-      <div className="w-full max-w-[20%] bg-blue-900">ASIDE</div>
+      <DosyaSidebar />
 
-      {/* MAIN CONTENT */}
-      <div className="w-full max-w-[80%] bg-gray-100">GRID</div>
+      <main className="w-full max-w-[80%] ml-[20%] flex flex-col">
+        {/* HEADER */}
+        <Header currentView={viewMode} setView={context.config.viewMode.set} />
+
+        {/* FILTERS */}
+        <div className="w-full px-4">
+          <span>{`search: ${filters.search?.name}`}</span>
+        </div>
+        <Filters />
+
+        {/* GRID */}
+        <div className="w-full p-4">
+          <DosyaGrid />
+        </div>
+      </main>
     </main>
   );
 }
