@@ -1,11 +1,15 @@
 {
   "name": "@fhorray/dosya",
   "version": "0.0.26",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
   "private": true,
   "scripts": {
     "tsup:dev": "bun run --filter=@fhorray/dosya dev",
     "tsup": "bun run --filter=@fhorray/dosya tsup",
-    "dev": "bun run --filter=demo dev"
+    "dev": "bun run --filter=demo dev",
+    "devs": "concurrently \"bun run dev\" \"bun run tsup\""
   },
   "workspaces": [
     "demo",

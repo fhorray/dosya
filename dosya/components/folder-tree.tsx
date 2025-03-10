@@ -80,11 +80,6 @@ export const FolderItem = ({
           onClick={async () => {
             setIsOpen(!isOpen);
             folders.setCurrent(folder);
-            files.setList({
-              folder: folder.key,
-              limit: 100,
-              page: 1,
-            });
           }}
         >
           <span className="mr-2 text-blue-600">

@@ -1,9 +1,9 @@
 import { useDosya } from '@/store';
 import { PlusIcon, SearchIcon, Trash2Icon } from 'lucide-react';
 import { Button } from './ui/button';
-import { DosyaAlert } from './custom/alert';
+import { DosyaAlert } from './modals/alert';
 import { DosyaFolder, Options } from '@/types';
-import { CreateFolder } from './modals/create-folder';
+import { CreateFolder } from './folders/modal';
 
 export const Filters = ({
   onDelete,

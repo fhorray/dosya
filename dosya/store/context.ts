@@ -22,7 +22,7 @@ export const useDosyaContext = create<DosyaProps['context']>((set) => ({
   },
   config: {
     defaultFolder: '/',
-    baseUrl: '/',
+    baseUrl: undefined,
     viewMode: {
       default: 'grid',
       set: (value: 'grid' | 'list') =>

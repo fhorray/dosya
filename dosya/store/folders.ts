@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { useDosyaContext } from './context';
 import { findFolder } from '@/utils/find-folder';
 import { toast } from 'sonner';
+import { useDosyaFiles } from './files';
 
 export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
   list: null,
@@ -19,7 +20,7 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
     try {
       const result = await useDosyaContext
         .getState()
-        .config.fetchers.onFolderCreate(data);
+        .config.fetchers.onFolderCreate?.(data);
 
       // set new result
       if (result) {
@@ -27,8 +28,6 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
           result?.children as DosyaFolder<Record<any, any>>[],
           data.key as string,
         );
-
-        console.log({ found });
 
         set((state) => ({
           ...state,
@@ -53,7 +52,7 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
     try {
       const result = await useDosyaContext
         .getState()
-        .config.fetchers.onFolderDelete(data);
+        .config.fetchers.onFolderDelete?.(data);
 
       // set new result
       if (result) {
@@ -79,7 +78,7 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
     try {
       const result = await useDosyaContext
         .getState()
-        .config.fetchers.fetchFolders(key);
+        .config.fetchers.fetchFolders?.(key);
 
       // set new result
       if (result) {
@@ -108,6 +107,15 @@ export const useDosyaFolders = create<DosyaProps['folders']>((set, get) => ({
         ...folder,
       },
     }));
+
+    // set list files
+    if (folder) {
+      useDosyaFiles.getState().setList({
+        folder: folder?.key as string,
+        limit: 100,
+        page: 1,
+      });
+    }
   },
 
   modal: {

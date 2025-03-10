@@ -25,10 +25,10 @@ type ConfigProps = {
     set: (value: 'grid' | 'list') => void;
   };
   defaultFolder: string;
-  baseUrl: string;
+  baseUrl: string | undefined;
 
   fetchers: {
-    fetchFiles: AsyncOrSyncFunction<
+    fetchFiles?: AsyncOrSyncFunction<
       [
         values: {
           folder: string | undefined;
@@ -38,23 +38,23 @@ type ConfigProps = {
       ],
       Promise<DosyaFile[] | null> | DosyaFile[] | null
     >;
-    fetchFolders: AsyncOrSyncFunction<
+    fetchFolders?: AsyncOrSyncFunction<
       [key?: string],
       Promise<DosyaFolder | null> | DosyaFolder | null
     >;
-    onFolderCreate: AsyncOrSyncFunction<
+    onFolderCreate?: AsyncOrSyncFunction<
       [folder: DosyaFolder],
       Promise<DosyaFolder | null | void> | DosyaFolder | null | void
     >;
-    onFolderDelete: AsyncOrSyncFunction<
+    onFolderDelete?: AsyncOrSyncFunction<
       [folder: string | DosyaFolder],
       Promise<DosyaFolder | null | void> | DosyaFolder | null | void
     >;
-    onFileDelete: AsyncOrSyncFunction<
+    onDeleteFile?: AsyncOrSyncFunction<
       [],
       Promise<DosyaFile | null | void> | DosyaFile | null | void
     >;
-    onCreateFile: AsyncOrSyncFunction<
+    onCreateFile?: AsyncOrSyncFunction<
       [],
       Promise<DosyaFile | null | void> | DosyaFile | null | void
     >;
@@ -64,7 +64,7 @@ type ConfigProps = {
 export type DosyaConfig = {
   defaultView: ConfigProps['viewMode']['default'];
   defaultFolder: string;
-  baseUrl: string;
+  baseUrl?: string;
   fetchers: ConfigProps['fetchers'];
 };
 

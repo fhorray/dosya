@@ -1,4 +1,4 @@
-import "./styles.css";
+import './styles.css';
 
-export * from "../dosya/providers/dosya-provider";
-export * from "../dosya/store";
+export * from './provider';
+export * from './store';

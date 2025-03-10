@@ -1,4 +1,4 @@
-import { DosyaProps, DosyaFile } from '@/types';
+import { DosyaFile, DosyaProps } from '@/types';
 import { create } from 'zustand';
 import { useDosyaContext } from './context';
 
@@ -11,9 +11,22 @@ export const useDosyaFiles = create<DosyaProps['files']>((set) => ({
     try {
       const result = await useDosyaContext
         .getState()
-        .config.fetchers.fetchFiles(values);
+        .config.fetchers.fetchFiles?.(values);
+      let mapped = [];
 
-      set(() => ({ list: result }));
+      if (useDosyaContext.getState().config.baseUrl) {
+        mapped =
+          result?.flatMap((file) => ({
+            ...file,
+            url: `${useDosyaContext.getState().config.baseUrl}/${file.key}`,
+          })) ?? [];
+      } else {
+        mapped = result ?? [];
+      }
+
+      if (result) {
+        set(() => ({ list: mapped }));
+      }
 
       // call onSuccess callback
       if (options?.onSuccess) {

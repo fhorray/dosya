@@ -29,7 +29,7 @@ export const DosyaGrid = ({
     <section className="w-auto space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">
-          Folders ({folders.list?.children?.length || 0})
+          Folders ({folders.current?.children?.length || 0})
         </h2>
       </div>
 

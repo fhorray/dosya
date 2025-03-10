@@ -1,3 +1,10 @@
+import { DosyaAlert } from '@/components/modals/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { useDosya } from '@/store';
 import { DosyaFile, DosyaFolder, Options } from '@/types';
 import { getContrastingColor } from '@/utils/get-color';
@@ -7,13 +14,6 @@ import {
   RefreshCwIcon,
   Trash2Icon,
 } from 'lucide-react';
-import { DosyaAlert } from '@/components/custom/alert';
-import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 
 export const FolderList = ({
   folders: foldersData,
@@ -103,7 +103,7 @@ export const FolderList = ({
                 color={
                   folder?.metadata?.color
                     ? getContrastingColor(folder?.metadata?.color)
-                    : 'amber'
+                    : 'oklch(0.769 0.188 70.08)'
                 }
               />
 

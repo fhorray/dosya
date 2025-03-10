@@ -45,6 +45,7 @@
     "tailwindcss": "^4.0.0"
   },
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.17.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-context-menu": "^2.2.6",
@@ -58,12 +59,14 @@
     "@radix-ui/react-toggle": "^1.1.2",
     "@radix-ui/react-toggle-group": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@tailwindcss/postcss": "^4.0.12",
     "@tailwindcss/vite": "^4.0.11",
     "chalk": "^5.4.1",
     "class-variance-authority": "^0.7.1",
     "commander": "^13.1.0",
     "execa": "^9.5.2",
     "fs-extra": "^11.3.0",
+    "idb-keyval": "^6.2.1",
     "lucide-react": "^0.477.0",
     "motion": "^12.4.7",
     "next-themes": "^0.4.4",
@@ -90,7 +93,6 @@
     "tsup": "^8.4.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0",
-    "@tailwind/postcss": "latest"
+    "vite": "^6.2.0"
   }
 }

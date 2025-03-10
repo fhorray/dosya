@@ -1,13 +1,13 @@
-import { cn } from "@/lib/utils";
-import { useDosya } from "@/store";
-import { ChevronRightIcon, FolderIcon, HomeIcon } from "lucide-react";
+import { cn } from '@/lib/utils';
+import { useDosya } from '@/store';
+import { ChevronRightIcon, FolderIcon, HomeIcon } from 'lucide-react';
 
 export const Breadbrumbs = () => {
   const { folders } = useDosya();
   return (
     <div className="flex gap-2">
       <HomeIcon />
-      {folders.current?.key.split("/").map((key, i) => {
+      {folders.current?.key.split('/').map((key, i) => {
         const isActive = key === folders.current?.name;
 
         // 🔹 Se for a primeira pasta, renderiza apenas o nome sem ícone
@@ -16,8 +16,8 @@ export const Breadbrumbs = () => {
             <span
               key={key}
               className={cn(
-                "flex items-center gap-3 opacity-60 pb-1",
-                isActive && "opacity-100"
+                'flex items-center gap-3 opacity-60 pb-1',
+                isActive && 'opacity-100',
               )}
             >
               {key}
@@ -30,8 +30,8 @@ export const Breadbrumbs = () => {
           <div
             key={key}
             className={cn(
-              "flex items-center gap-3 opacity-60",
-              isActive && "opacity-100"
+              'flex items-center gap-3 opacity-60',
+              isActive && 'opacity-100',
             )}
           >
             <ChevronRightIcon size={17} />

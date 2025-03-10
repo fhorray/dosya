@@ -1,17 +1,45 @@
-import { useEffect } from 'react';
-
 import { useDosya } from '@fhorray/dosya';
-import { DosyaGrid, DosyaSidebar, Filters, Header } from '@fhorray/dosya/ui';
+import {
+  DosyaGrid,
+  DosyaTree,
+  Filters,
+  FolderSelector,
+  Header,
+  UploadFileButton,
+} from '@fhorray/dosya/ui';
+import { UploadIcon } from 'lucide-react';
 
 function App() {
-  const { folders, files, context, filters } = useDosya();
+  const { context, folders, filters } = useDosya();
 
   const viewMode = context.config.viewMode.default;
 
   return (
     <main className="flex gap-4 w-full">
       {/* SIDEBAR */}
-      <DosyaSidebar />
+      <aside className="w-full max-w-[20%] border-r-2 border-gray-200 p-4 h-screen overflow-y-auto fixed bg-white space-y-4">
+        {/* ERROR */}
+        {context.error.message && (
+          <div className="bg-red-500 text-white p-2 rounded">
+            {context.error.message}
+          </div>
+        )}
+
+        {/* UPLOAD */}
+        <UploadFileButton>
+          <UploadIcon />
+          New File
+        </UploadFileButton>
+
+        {/* FOLDER SELECTOR */}
+        <FolderSelector
+          onSelect={(folder) => {
+            folders.setCurrent(folder);
+          }}
+          omit={[]}
+        />
+        <DosyaTree />
+      </aside>
 
       <main className="w-full max-w-[80%] ml-[20%] flex flex-col">
         {/* HEADER */}
