@@ -33,7 +33,7 @@ export const CreateFolder = ({ children }: CreateFolderProps) => {
       id: createId(),
       name: folderName,
       key:
-        folders.current?.key !== undefined
+        folders.current?.key !== undefined && folders.current?.key !== 'root'
           ? `${folders.current?.key}/${folderName}`
           : folderName,
       parentId: folders.current?.id,
